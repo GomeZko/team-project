@@ -6,7 +6,7 @@ When a junior developer job-seeker is applying for their first software developm
 |---|---|
 | Team | Daniel Ivanenko, Product · Aleksandr Gomžin, Delivery · Oleksandr Krutko, Quality |
 | Dev URL | https://team-project-azure-pi.vercel.app |
-| Board | [https://...] |
+| Board | https://github.com/users/GomeZko/projects/5/views/2 |
 | Course | PR-520 Software Development Team Project, EEK, 2026/27 |
 
 **First time here? Follow [docs/SETUP.md](docs/SETUP.md) step by step.**
