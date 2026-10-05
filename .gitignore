@@ -1,24 +1,27 @@
-# OS
-.DS_Store
-Thumbs.db
+# Installed packages and build output
+node_modules
+dist
+dist-ssr
 
-# Editors
-.vscode/
-.idea/
-
-# Secrets
+# Private settings. Never commit these.
 .env
-.env.*
-!.env.example
+.env.local
+*.local
 
-# Dependencies and builds
-node_modules/
-__pycache__/
-*.pyc
-.venv/
-venv/
-dist/
-build/
+# Test reports
+playwright-report
+test-results
 
 # Logs
 *.log
+
+# Editor files. Keep the shared VS Code settings for the team.
+.vscode/*
+!.vscode/extensions.json
+!.vscode/mcp.json
+.idea
+.DS_Store
+
+# Local env files (keep the example)
+.env.*
+!.env.example
