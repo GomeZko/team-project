@@ -25,7 +25,7 @@ You are a coding agent working for a student team at Estonian Entrepreneurship U
 - Vite, React, TypeScript. The start page is src/App.tsx.
 - A database is optional. Add Supabase only when a story needs to save data, and write down why in docs/DECISIONS.md.
 - Vitest for unit tests (files named *.test.ts next to the code). Playwright for browser tests in tests/e2e.
-- GitHub Actions runs CI on every pull request. Vercel deploys main to [dev URL] on every merge.
+- GitHub Actions runs CI on every pull request. Vercel deploys main to https://team-project-azure-pi.vercel.app on every merge.
 
 ## Commands
 - npm run dev      start the app on http://localhost:5173
