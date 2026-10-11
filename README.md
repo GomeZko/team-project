@@ -1,6 +1,6 @@
 # JobBridge
 
-When a junior developer job-seeker is applying for their first software development job but has no professional experience to prove their skills, so their CV is filtered out before anyone reviews their actual ability, JobBridge lets them complete a short, realistic coding task and get an AI-reviewed skill report they can attach to job applications, so that interview invitations per application go from [today, from the survey] to [target].
+When a junior developer looking for their first job is applying for junior developer roles but has no quick, objective way to prove a specific skill, so their CV is rejected or ignored before anyone checks what they can do, JobBridge lets them complete a short, realistic coding task and get an auto-tested, AI-reviewed skill report they can attach to applications, so that the time to get an objective assessment of one skill goes from a few days or longer (6 of 9 surveyed) to under 1 hour.
 
 | | |
 |---|---|
