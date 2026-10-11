@@ -1,49 +1,65 @@
-# JobBridge — Product Definition (G1)
+# JobBridge · Product statement (G1)
 
-Draft for the "Definition of a problem" gate (G1). Simplified scope: **only the job-seeking student side**, with no employer-facing interface in v1.
+Scope of v1: **only the job-seeking student side**. There is no employer-facing interface.
 
-> ⚠️ Sections marked **[FILL IN AFTER INTERVIEW]** must contain what the real interviewee said. Do not submit invented interview findings.
+Evidence: an anonymous survey of 9 junior and aspiring developers, run by Daniel Ivanenko on 28.09.2026. Summary: [docs/interviews/2026-09-28-survey-summary.md](interviews/2026-09-28-survey-summary.md). All numbers are self-reported by the respondents. We have not interviewed anyone in person yet; see "What we do not know yet".
 
 ## Client
 
-A junior or aspiring software developer in Estonia with little or no professional experience who is applying for their first developer role. For example: a bootcamp graduate, a self-taught developer, or a student close to graduation.
+A junior or aspiring software developer in Estonia, looking for their first developer job or about to start looking. For example: a student close to graduation, a bootcamp student or a self-taught developer.
 
-*(The interviewee's name stays out of this document. We describe them only by role.)*
+- How we reached them: an anonymous 2-minute Google Form run by Daniel. Where it was shared: unknown, to add.
+- Who answered: 4 are actively applying for their first developer role, 4 are studying and not applying yet, 1 got their first developer job in the last 12 months.
+- No names are kept in this repository. Respondents are numbered R1–R9.
 
-## Current process & where it breaks
+## The process today
 
-**[FILL IN AFTER INTERVIEW]**
+What respondents said they do now:
 
-Today this person applies for junior and entry-level developer jobs with a CV and cover letter, without any independent proof of their coding ability. Ask the interviewee these questions and record their actual answers:
+1. **Find a job.** Mostly on LinkedIn (8 of 9), also CV.ee (5), referrals and friends (5), company websites (3) and Telegram/Discord communities (2).
+2. **Apply with a CV and links.** To show they can code they use a GitHub profile (6 of 9), personal projects (6), a technology list in the CV (5), certificates (2) or a portfolio site (2). One has done take-home tasks; one shows nothing beyond the CV.
+3. **Wait for an answer.** Most get a generic rejection with no reason (5 of 9) or no reply at all (1). One got useful, specific feedback.
 
-- Which job boards or channels do they use to apply?
-- How do they currently show their skills (portfolio, GitHub, personal projects, certificates)?
-- What feedback do they get back from employers, if any?
-- At what point does the process usually stop for them (no reply, rejected after CV screening, rejected after the technical interview, etc.)?
+Where it breaks:
 
-## Baseline measurement
+- **Before any interview.** 7 of 9 say the process most often stops at the CV screen (5) or with no reply (2). Only 1 reaches a technical interview, and 1 says they usually get offers.
+- **No quick, objective proof of a skill.** If an employer asked today for an objective assessment of one skill, such as SQL, 6 of 9 say it would take a few days or longer, or they could not get one at all. 3 say a few hours.
+- **No reason given.** With a generic rejection or no reply, the person cannot tell what to improve.
 
-**[FILL IN AFTER INTERVIEW]**. If the number is self-reported rather than measured, label it as an estimate.
+## Baseline metric
 
-The result should look like this (replace the numbers and add a source):
+**Time to get an objective assessment of one specific skill that can be shown to an employer.**
 
-> "Sends approximately N applications per week and gets 1 interview invitation per M applications. (Estimate, self-reported by the interviewee on [date].)"
+Today: **a few days or longer for 6 of 9 respondents** (a few days: 3, weeks: 2, could not get one: 1). The other 3 said a few hours.
 
-## Problem statement
+Source: survey question "If you needed an OBJECTIVE assessment of one specific skill (e.g. SQL) to show an employer TODAY, how long would it realistically take to get one?", 9 answers, 28.09.2026. **Estimate, self-reported by respondents.**
 
-When **a junior developer job-seeker** is **applying for their first software development job** but **has no professional experience to prove their skills, so their CV is filtered out before anyone reviews their actual ability**, **JobBridge lets them complete a short, realistic coding task and get an AI-reviewed skill report they can attach to job applications**, so that **[baseline metric, e.g. interview invitations per application]** goes from **[today's value, from the interview]** to **[target value, agreed with the interviewee or teacher]**.
+## The statement
 
-## Three things we will not build (v1)
+When **a junior developer looking for their first job** is **applying for junior developer roles** but **has no quick, objective way to prove a specific skill, so their CV is rejected or ignored before anyone checks what they can do**, **JobBridge lets them complete a short, realistic coding task and get an auto-tested, AI-reviewed skill report they can attach to applications**, so that **the time to get an objective assessment of one skill** goes from **a few days or longer (6 of 9 respondents)** to **under 1 hour**.
 
-1. An employer-facing dashboard, login or portal. Employers only see a report link or PDF that the student shares with them.
+The target "under 1 hour" is our proposal (a 15–20 minute task plus the report). It still needs to be agreed with the teacher and checked with a client.
+
+## Out of scope
+
+Three things we will not build in v1, so the agent does not build them either:
+
+1. An employer-facing dashboard, login or portal. Employers only see a report link or PDF that the student shares.
 2. Payments or subscriptions.
-3. Support for more than one interface language (English only in v1).
+3. More than one interface language. v1 is English only.
 
-## Open questions
+## Red-team notes
 
-Go through these with the interviewee and write the answers into the sections above:
+The hardest questions about our idea, and what our evidence says:
 
-- Who has this problem, and how do they do this today?
-- How much time, money or effort does it cost them?
-- Why would they try JobBridge? What is the smallest version they could actually test?
-- What do our notes *not* answer yet? Say so explicitly instead of filling the gap with a guess.
+1. **"Juniors already have proof: GitHub and projects."** Partly true. Asked how many of their last 10 applications had objective proof attached, the median answer was 7. We think many counted GitHub or personal projects, so the question was read in different ways. We will ask in follow-up chats what they count as proof, and whether employers look at it.
+2. **"Will an employer trust or even open a JobBridge report?"** Unknown. v1 has no employer side, and nobody in our survey is an employer. We need at least one conversation with someone who hires juniors.
+3. **"Is a faster assessment the real problem, or is it the CV screen?"** 5 of 9 are rejected at the CV screen. We assume a skill report could get a CV past that screen, but we have not tested it.
+4. **"Would juniors use it?"** 6 of 9 rated "how much more likely to apply or feel confident" with a free skill report at 4 or 5 out of 5 (mean 3.9). That is a stated intention, not behaviour.
+5. **"Is 9 answers enough?"** No. It is a small sample, and 4 respondents are not applying yet. It shows a direction, not a measured baseline.
+
+## What we do not know yet
+
+- How many applications a junior sends per week and how many interview invitations they get. The survey did not ask, so we do not use this as our baseline.
+- How one client goes through a real application, step by step. 3 respondents agreed to a 15-minute follow-up chat; Daniel will contact them and add the notes to `docs/interviews/`.
+- What smallest version a client would actually test: one task, one skill?
