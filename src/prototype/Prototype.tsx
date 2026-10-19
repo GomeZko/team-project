@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { toAppUser } from '../lib/auth'
+import { supabase } from '../lib/supabase'
 import { runChecks, withCustomTasks, type Category, type CheckResult, type Task } from './data'
 import AddTask from './AddTask'
 import MyTasks from './MyTasks'
 import Dashboard from './Dashboard'
 import History from './History'
 import SignIn from './SignIn'
-import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, loadUser, saveUser, type Attempt, type User } from './store'
+import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
-// Everything runs in the browser with sample data: no real accounts, no database, no real AI.
+// Accounts are real (Supabase). Tasks and reports are sample data in this browser, and there is no real AI yet.
 type Screen =
   | { name: 'dashboard' }
   | { name: 'categories' }
@@ -20,31 +22,40 @@ type Screen =
   | { name: 'report'; attempt: Attempt; task?: Task }
 
 export default function Prototype() {
-  const [user, setUser] = useState<User | null>(loadUser)
-  const [attempts, setAttempts] = useState<Attempt[]>(loadAttempts)
+  const [user, setUser] = useState<User | null>(null)
+  const [checking, setChecking] = useState(Boolean(supabase))
+  const [attempts, setAttempts] = useState<Attempt[]>([])
   const [customTasks, setCustomTasks] = useState(loadCustomTasks)
   const [screen, setScreen] = useState<Screen>({ name: 'dashboard' })
+  const shownUserId = useRef<string | null>(null)
   const categories = withCustomTasks(customTasks)
 
-  if (!user) {
-    return (
-      <SignIn
-        onSignIn={(u) => {
-          saveUser(u)
-          setUser(u)
-          setScreen({ name: 'dashboard' })
-        }}
-      />
-    )
-  }
+  // Supabase remembers the session in this browser and tells us when someone signs in or out.
+  // It also sends events when a token is refreshed: we only reset the screen when the person changes.
+  useEffect(() => {
+    if (!supabase) return
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      const next = session ? toAppUser(session.user) : null
+      if ((next?.id ?? null) !== shownUserId.current) {
+        shownUserId.current = next?.id ?? null
+        setUser(next)
+        setAttempts(next ? loadAttempts(next.id) : [])
+        setScreen({ name: 'dashboard' })
+      }
+      setChecking(false)
+    })
+    return () => data.subscription.unsubscribe()
+  }, [])
 
-  function signOut() {
-    saveUser(null)
-    setUser(null)
+  if (checking) return <main><p className="hint">Loading…</p></main>
+  if (!user) return <SignIn />
+
+  async function signOut() {
+    await supabase?.auth.signOut()
   }
 
   function finish(task: Task, results: CheckResult[]) {
-    const next = addAttempt(attempts, task.id, task.title, results)
+    const next = addAttempt(user!.id, attempts, task.id, task.title, results)
     setAttempts(next)
     setScreen({ name: 'report', attempt: next[0], task })
   }

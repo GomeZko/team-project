@@ -3,7 +3,8 @@
 ## What we test
 | Story | End-to-end test file | Unit tests | Status |
 |---|---|---|---|
-| S1 | tests/e2e/s1-*.spec.ts | | todo |
+| S1 sign up, sign in, sign out | tests/e2e/auth.spec.ts (Supabase replaced by tests/e2e/supabaseMock.ts) | src/lib/auth.test.ts | done |
+| S2–S4, S6–S8 in the prototype | tests/e2e/prototype.spec.ts | src/lib/databaseStatus.test.ts | prototype |
 
 ## How we run it
 - Locally: `npx playwright test` against the dev server
