@@ -1,12 +1,13 @@
 import { test, expect, type Page } from '@playwright/test';
 
 // G4 prototype: the main flow from docs/UX.md works with sample data.
-async function signIn(page: Page) {
+async function signIn(page: Page, name = 'Test Seeker', author = false) {
   await page.goto('/?prototype');
-  await page.getByLabel('Name').fill('Test Seeker');
-  await page.getByLabel('Email').fill('seeker@example.com');
+  await page.getByLabel('Name').fill(name);
+  await page.getByLabel('Email').fill(`${author ? 'author' : 'seeker'}@example.com`);
+  if (author) await page.getByLabel('a task author').check();
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page.getByRole('heading', { name: 'Hi, Test Seeker' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
 }
 
 test('sign-in needs a name and a valid email', async ({ page }) => {
@@ -58,4 +59,26 @@ test('history lists every attempt and opens its report', async ({ page }) => {
   await expect(page.getByRole('row')).toHaveCount(3);
   await page.getByRole('button', { name: 'Open report: Top 3 customers by order total, 33 / 100' }).click();
   await expect(page.getByRole('heading', { name: 'Score: 33 / 100' })).toBeVisible();
+});
+
+test('a task author publishes a task and a job-seeker can solve it', async ({ page }) => {
+  await signIn(page, 'Test Author', true);
+  await page.getByRole('button', { name: 'Add a task' }).click();
+  await page.getByLabel('Title').fill('Count active users');
+  await page.getByLabel('Description').fill('Write a query that counts users where active is true.');
+  await page.getByRole('button', { name: 'Publish task' }).click();
+  await expect(page.getByRole('alert')).toHaveText('Add at least one check, like: Uses GROUP BY | group by');
+  await page.getByLabel(/^Checks/).fill('Counts rows | count(\nFilters active users | where');
+  await page.getByRole('button', { name: 'Publish task' }).click();
+  await expect(page.getByRole('status')).toHaveText('Task published: Count active users');
+  await expect(page.getByText('SQL · 2 checks · 15 min')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Sign out' }).click();
+  await signIn(page);
+  await page.getByRole('button', { name: 'Start a task' }).click();
+  await page.getByRole('button', { name: /SQL.*2 tasks/ }).click();
+  await page.getByRole('button', { name: /Count active users/ }).click();
+  await page.getByLabel('Your solution').fill('SELECT COUNT(*) FROM users WHERE active');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByRole('heading', { name: 'Automated tests: 2 of 2 passed' })).toBeVisible();
 });

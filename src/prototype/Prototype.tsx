@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { categories, runChecks, type Category, type CheckResult, type Task } from './data'
+import { runChecks, withCustomTasks, type Category, type CheckResult, type Task } from './data'
+import AddTask from './AddTask'
+import MyTasks from './MyTasks'
 import Dashboard from './Dashboard'
 import History from './History'
 import SignIn from './SignIn'
-import { addAttempt, loadAttempts, loadUser, saveUser, type Attempt, type User } from './store'
+import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, loadUser, saveUser, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
 // Everything runs in the browser with sample data: no real accounts, no database, no real AI.
@@ -11,6 +13,8 @@ type Screen =
   | { name: 'dashboard' }
   | { name: 'categories' }
   | { name: 'history' }
+  | { name: 'add-task' }
+  | { name: 'my-tasks'; published?: string }
   | { name: 'tasks'; category: Category }
   | { name: 'task'; task: Task }
   | { name: 'report'; attempt: Attempt; task?: Task }
@@ -18,7 +22,9 @@ type Screen =
 export default function Prototype() {
   const [user, setUser] = useState<User | null>(loadUser)
   const [attempts, setAttempts] = useState<Attempt[]>(loadAttempts)
+  const [customTasks, setCustomTasks] = useState(loadCustomTasks)
   const [screen, setScreen] = useState<Screen>({ name: 'dashboard' })
+  const categories = withCustomTasks(customTasks)
 
   if (!user) {
     return (
@@ -43,23 +49,43 @@ export default function Prototype() {
     setScreen({ name: 'report', attempt: next[0], task })
   }
 
-  const go = (name: 'dashboard' | 'categories' | 'history') => setScreen({ name } as Screen)
+  const go = (name: 'dashboard' | 'categories' | 'history' | 'add-task') => setScreen({ name } as Screen)
 
   return (
     <>
       <header className="topbar">
         <strong className="brand">JobBridge</strong>
         <nav aria-label="Main">
-          <button className="link" aria-current={screen.name === 'dashboard' ? 'page' : undefined} onClick={() => go('dashboard')}>Dashboard</button>
+          <button className="link" aria-current={screen.name === 'dashboard' || screen.name === 'my-tasks' ? 'page' : undefined} onClick={() => go('dashboard')}>Dashboard</button>
           <button className="link" aria-current={screen.name === 'categories' ? 'page' : undefined} onClick={() => go('categories')}>Tasks</button>
-          <button className="link" aria-current={screen.name === 'history' ? 'page' : undefined} onClick={() => go('history')}>History</button>
+          {user.role === 'seeker' ? (
+            <button className="link" aria-current={screen.name === 'history' ? 'page' : undefined} onClick={() => go('history')}>History</button>
+          ) : (
+            <button className="link" aria-current={screen.name === 'add-task' ? 'page' : undefined} onClick={() => go('add-task')}>Add task</button>
+          )}
         </nav>
         <span className="who">{user.name}</span>
         <button onClick={signOut}>Sign out</button>
       </header>
       <main>
         <p className="badge">Prototype · sample data</p>
-        {screen.name === 'dashboard' && (
+        {screen.name === 'my-tasks' || (screen.name === 'dashboard' && user.role === 'author') ? (
+          <MyTasks
+            user={user}
+            tasks={customTasks}
+            published={screen.name === 'my-tasks' ? screen.published : undefined}
+            onAdd={() => go('add-task')}
+          />
+        ) : null}
+        {screen.name === 'add-task' && (
+          <AddTask
+            onAdd={(categoryId, task) => {
+              setCustomTasks(addCustomTask(customTasks, { categoryId, author: user.email, task }))
+              setScreen({ name: 'my-tasks', published: task.title })
+            }}
+          />
+        )}
+        {screen.name === 'dashboard' && user.role === 'seeker' && (
           <Dashboard
             user={user}
             attempts={attempts}
@@ -71,7 +97,7 @@ export default function Prototype() {
           <History attempts={attempts} onOpen={(attempt) => setScreen({ name: 'report', attempt })} />
         )}
         {screen.name === 'categories' && (
-          <Categories onPick={(category) => setScreen({ name: 'tasks', category })} />
+          <Categories categories={categories} onPick={(category) => setScreen({ name: 'tasks', category })} />
         )}
         {screen.name === 'tasks' && (
           <Tasks
@@ -95,7 +121,7 @@ export default function Prototype() {
   )
 }
 
-function Categories({ onPick }: { onPick: (c: Category) => void }) {
+function Categories({ categories, onPick }: { categories: Category[]; onPick: (c: Category) => void }) {
   return (
     <>
       <h1>Choose a skill to prove</h1>
