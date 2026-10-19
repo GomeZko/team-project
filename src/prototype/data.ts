@@ -57,3 +57,7 @@ export function runChecks(task: Task, solution: string): CheckResult[] {
   const code = solution.toLowerCase().replace(/\s+/g, ' ')
   return task.checks.map((c) => ({ name: c.name, passed: code.includes(c.mustContain) }))
 }
+
+export function withCustomTasks(custom: { categoryId: string; task: Task }[]): Category[] {
+  return categories.map((c) => ({ ...c, tasks: [...c.tasks, ...custom.filter((t) => t.categoryId === c.id).map((t) => t.task)] }))
+}

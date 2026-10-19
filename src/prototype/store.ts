@@ -1,6 +1,6 @@
 // Prototype storage. Everything stays in this browser (localStorage): no server, no database.
 // There are no passwords: the demo sign-in only remembers a display name, an email and a role.
-import type { CheckResult } from './data'
+import type { CheckResult, Task } from './data'
 
 export type Role = 'seeker' | 'author'
 export type User = { name: string; email: string; role: Role }
@@ -8,6 +8,7 @@ export type Attempt = { id: string; taskId: string; taskTitle: string; results: 
 
 const USER_KEY = 'jobbridge-demo-user'
 const ATTEMPTS_KEY = 'jobbridge-demo-attempts'
+const TASKS_KEY = 'jobbridge-demo-tasks'
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -36,5 +37,14 @@ export function addAttempt(attempts: Attempt[], taskId: string, taskTitle: strin
   const attempt: Attempt = { id: `${Date.now()}`, taskId, taskTitle, results, score, date: new Date().toISOString() }
   const next = [attempt, ...attempts]
   write(ATTEMPTS_KEY, next)
+  return next
+}
+
+// Tasks added by a task author. They show up for job-seekers in the same browser.
+export type CustomTask = { categoryId: string; author: string; task: Task }
+export const loadCustomTasks = () => read<CustomTask[]>(TASKS_KEY, [])
+export function addCustomTask(list: CustomTask[], item: CustomTask): CustomTask[] {
+  const next = [...list, item]
+  write(TASKS_KEY, next)
   return next
 }

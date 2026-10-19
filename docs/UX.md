@@ -2,7 +2,40 @@
 
 Written in words so an agent can build a prototype in one pass and a tester can follow it.
 
-v1 covers the job-seeker only (see PRODUCT.md). Core stories: S2 choose a category, S3 open a task, S4 submit a solution and see test results. The report and sharing (S6, S7) are shown in the prototype with sample data. Sign-in (S1), the real AI review (S5) and history (S8) are not in the prototype.
+v1 covers the job-seeker (see PRODUCT.md). Core stories: S2 choose a category, S3 open a task, S4 submit a solution and see test results. The prototype also shows a demo sign-in (S1), the report and sharing (S6, S7) and history (S8) with sample data, plus a task author role that adds tasks. The real AI review (S5) is not in the prototype.
+
+All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" · "History" (job-seeker) or "Add task" (author) · the user's name · "Sign out".
+
+### 0. Sign in (demo)
+- Purpose: enter the prototype as a job-seeker or a task author.
+- First thing seen: "JobBridge", fields "Name" and "Email", a choice "I am: looking for a developer job / a task author".
+- Primary action: "Sign in".
+- Empty state: not applicable.
+- Loading state: not applicable, nothing is sent to a server.
+- Error state: "Enter your name and a valid email."
+- Copy: "Demo only: no password, use a made-up name and email. Data stays in this browser."
+
+### 0a. Dashboard (job-seeker)
+- Purpose: see progress and start a task.
+- First thing seen: "Hi, <name>", three numbers: attempts, best score, tasks tried.
+- Primary action: "Start a task" (goes to screen 1).
+- Secondary actions: open one of the recent reports.
+- Empty state: "No reports yet. Start a task to get your first one."
+
+### 0b. History (job-seeker)
+- Purpose: see every attempt and reopen a report.
+- First thing seen: table with date, task, tests passed, score, newest first.
+- Primary action: "Open report".
+- Empty state: "No attempts yet. Your reports appear here after you submit a task."
+
+### 0c. My tasks and Add a task (task author)
+- Purpose: publish tasks for job-seekers.
+- First thing seen: "Hi, <name>", "Add a task" and the list "My tasks" (category, number of checks, minutes).
+- Form fields: Category, Title, Time in minutes, Description, Starter code (optional), Checks (one per line: "test name | text the solution must contain").
+- Primary action: "Publish task". After publishing: "Task published: <title>", and the task appears in its category for job-seekers.
+- Empty state: "You have not published any tasks yet."
+- Error states: "Add a title and a description." · "Time must be between 5 and 60 minutes." · "Add at least one check, like: Uses GROUP BY | group by"
+
 
 ## Screens
 
@@ -40,22 +73,24 @@ v1 covers the job-seeker only (see PRODUCT.md). Core stories: S2 choose a catego
 - Purpose: see the result and share it with an employer.
 - First thing seen: "Your skill report", the task title and "Score: N / 100".
 - Primary action: "Share report".
-- Secondary actions: "Try again" (back to the task), "Choose another task" (back to screen 1).
+- Secondary actions: "Try again" (back to the task), "Back to dashboard".
 - Empty state: not applicable, a report always has results.
 - Loading state: not applicable, shown after tests finish.
 - Error state: in v1 a failing test is a result, not an error: it shows ❌ next to the test name.
-- Copy: "Your skill report" · "Score: N / 100" · "Automated tests: X of Y passed" · "AI review" · "Share report" · "Try again" · "Choose another task" · after sharing: "Link ready to send: …".
+- Copy: "Your skill report" · "Score: N / 100" · "Automated tests: X of Y passed" · "AI review" · "Share report" · "Try again" · "Back to dashboard" · after sharing: "Link ready to send: …".
 
 ## Flows
 
 Main flow: from choosing a skill to a report the person can share.
 
-1. **Choose a skill**: select "SQL".
-2. **Category tasks**: select "Top 3 customers by order total".
-3. **Task**: read the description, write a query in "Your solution", select "Submit solution".
-4. **Task**: see "Running tests…" for about a second.
-5. **Skill report**: see the score and which tests passed.
-6. **Skill report**: select "Share report" and see the link to send.
+1. **Sign in**: enter a made-up name and email, keep "looking for a developer job", select "Sign in".
+2. **Dashboard**: select "Start a task".
+3. **Choose a skill**: select "SQL".
+4. **Category tasks**: select "Top 3 customers by order total".
+5. **Task**: read the description, write a query in "Your solution", select "Submit solution".
+6. **Task**: see "Running tests…" for about a second.
+7. **Skill report**: see the score and which tests passed.
+8. **Skill report**: select "Share report" and see the link to send.
 
 ## Prototype
 Link: https://team-project-azure-pi.vercel.app/?prototype

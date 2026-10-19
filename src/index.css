@@ -70,3 +70,6 @@ label.inline { display: flex; gap: 0.5rem; font-weight: 400; margin: 0.4rem 0; }
 .history caption { text-align: left; color: #57606a; margin-bottom: 0.5rem; }
 .history th, .history td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #d0d7de; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+select { font: inherit; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #d0d7de; border-radius: 6px; }
+.success { color: #1a7f37; font-weight: 600; }
+li.card { cursor: default; flex-wrap: wrap; gap: 0.5rem; border: 1px solid #d0d7de; }
