@@ -41,3 +41,21 @@ test('error and empty states: starter code only, category without tasks', async 
   await page.getByRole('button', { name: /Junior Backend/ }).click();
   await expect(page.getByRole('status')).toHaveText('No tasks in this category yet. Try another category.');
 });
+
+test('history lists every attempt and opens its report', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'History' }).click();
+  await expect(page.getByRole('status')).toHaveText('No attempts yet. Your reports appear here after you submit a task.');
+  for (const solution of ['SELECT 1 GROUP BY x', 'SELECT 1 GROUP BY x ORDER BY y DESC LIMIT 3']) {
+    await page.getByRole('button', { name: 'Tasks' }).click();
+    await page.getByRole('button', { name: /SQL/ }).click();
+    await page.getByRole('button', { name: /Top 3 customers/ }).click();
+    await page.getByLabel('Your solution').fill(solution);
+    await page.getByRole('button', { name: 'Submit solution' }).click();
+    await expect(page.getByRole('heading', { name: 'Your skill report' })).toBeVisible();
+  }
+  await page.getByRole('button', { name: 'History' }).click();
+  await expect(page.getByRole('row')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Open report: Top 3 customers by order total, 33 / 100' }).click();
+  await expect(page.getByRole('heading', { name: 'Score: 33 / 100' })).toBeVisible();
+});
