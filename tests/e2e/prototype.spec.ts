@@ -82,3 +82,13 @@ test('a task author publishes a task and a job-seeker can solve it', async ({ pa
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Automated tests: 2 of 2 passed' })).toBeVisible();
 });
+
+test('Java tasks pass with or without spaces around operators', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Java.*2 tasks/ }).click();
+  await page.getByRole('button', { name: /Is the number even/ }).click();
+  await page.getByLabel('Your solution').fill('public static boolean isEven(int n) {\n  return n%2==0;\n}');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByRole('heading', { name: 'Automated tests: 3 of 3 passed' })).toBeVisible();
+});
