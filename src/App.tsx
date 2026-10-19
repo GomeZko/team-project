@@ -1,8 +1,12 @@
 import { databaseStatus } from './lib/databaseStatus'
+import Prototype from './prototype/Prototype'
 
 // This is your start page. Change the heading to your product name in session 4.
 // Then replace this page, one story at a time.
 export default function App() {
+  // The G4 prototype opens at /?prototype. See docs/UX.md.
+  if (new URLSearchParams(window.location.search).has('prototype')) return <Prototype />
+
   const database = databaseStatus(
     import.meta.env.VITE_SUPABASE_URL,
     import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -12,6 +16,10 @@ export default function App() {
     <main>
       <h1>JobBridge</h1>
       <p className="lead">Prove your coding skills with a short task and a shareable skill report.</p>
+
+      <p>
+        <a href="?prototype">Try the prototype</a>
+      </p>
 
       <ul className="checks">
         <li>
