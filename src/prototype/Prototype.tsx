@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { categories, runChecks, type Category, type CheckResult, type Task } from './data'
 import Dashboard from './Dashboard'
+import History from './History'
 import SignIn from './SignIn'
 import { addAttempt, loadAttempts, loadUser, saveUser, type Attempt, type User } from './store'
 
@@ -9,6 +10,7 @@ import { addAttempt, loadAttempts, loadUser, saveUser, type Attempt, type User }
 type Screen =
   | { name: 'dashboard' }
   | { name: 'categories' }
+  | { name: 'history' }
   | { name: 'tasks'; category: Category }
   | { name: 'task'; task: Task }
   | { name: 'report'; attempt: Attempt; task?: Task }
@@ -41,7 +43,7 @@ export default function Prototype() {
     setScreen({ name: 'report', attempt: next[0], task })
   }
 
-  const go = (name: 'dashboard' | 'categories') => setScreen({ name } as Screen)
+  const go = (name: 'dashboard' | 'categories' | 'history') => setScreen({ name } as Screen)
 
   return (
     <>
@@ -50,6 +52,7 @@ export default function Prototype() {
         <nav aria-label="Main">
           <button className="link" aria-current={screen.name === 'dashboard' ? 'page' : undefined} onClick={() => go('dashboard')}>Dashboard</button>
           <button className="link" aria-current={screen.name === 'categories' ? 'page' : undefined} onClick={() => go('categories')}>Tasks</button>
+          <button className="link" aria-current={screen.name === 'history' ? 'page' : undefined} onClick={() => go('history')}>History</button>
         </nav>
         <span className="who">{user.name}</span>
         <button onClick={signOut}>Sign out</button>
@@ -63,6 +66,9 @@ export default function Prototype() {
             onBrowse={() => go('categories')}
             onOpen={(attempt) => setScreen({ name: 'report', attempt })}
           />
+        )}
+        {screen.name === 'history' && (
+          <History attempts={attempts} onOpen={(attempt) => setScreen({ name: 'report', attempt })} />
         )}
         {screen.name === 'categories' && (
           <Categories onPick={(category) => setScreen({ name: 'tasks', category })} />
