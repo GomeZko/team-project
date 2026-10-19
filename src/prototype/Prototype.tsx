@@ -1,46 +1,91 @@
 import { useState } from 'react'
 import { categories, runChecks, type Category, type CheckResult, type Task } from './data'
+import Dashboard from './Dashboard'
+import SignIn from './SignIn'
+import { addAttempt, loadAttempts, loadUser, saveUser, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
-// Everything runs in the browser with sample data: no account, no database, no real AI.
+// Everything runs in the browser with sample data: no real accounts, no database, no real AI.
 type Screen =
+  | { name: 'dashboard' }
   | { name: 'categories' }
   | { name: 'tasks'; category: Category }
   | { name: 'task'; task: Task }
-  | { name: 'report'; task: Task; results: CheckResult[] }
+  | { name: 'report'; attempt: Attempt; task?: Task }
 
 export default function Prototype() {
-  const [screen, setScreen] = useState<Screen>({ name: 'categories' })
+  const [user, setUser] = useState<User | null>(loadUser)
+  const [attempts, setAttempts] = useState<Attempt[]>(loadAttempts)
+  const [screen, setScreen] = useState<Screen>({ name: 'dashboard' })
+
+  if (!user) {
+    return (
+      <SignIn
+        onSignIn={(u) => {
+          saveUser(u)
+          setUser(u)
+          setScreen({ name: 'dashboard' })
+        }}
+      />
+    )
+  }
+
+  function signOut() {
+    saveUser(null)
+    setUser(null)
+  }
+
+  function finish(task: Task, results: CheckResult[]) {
+    const next = addAttempt(attempts, task.id, task.title, results)
+    setAttempts(next)
+    setScreen({ name: 'report', attempt: next[0], task })
+  }
+
+  const go = (name: 'dashboard' | 'categories') => setScreen({ name } as Screen)
 
   return (
-    <main>
-      <p className="badge">Prototype · sample data</p>
-      {screen.name === 'categories' && (
-        <Categories onPick={(category) => setScreen({ name: 'tasks', category })} />
-      )}
-      {screen.name === 'tasks' && (
-        <Tasks
-          category={screen.category}
-          onBack={() => setScreen({ name: 'categories' })}
-          onPick={(task) => setScreen({ name: 'task', task })}
-        />
-      )}
-      {screen.name === 'task' && (
-        <TaskScreen
-          task={screen.task}
-          onBack={() => setScreen({ name: 'categories' })}
-          onDone={(results) => setScreen({ name: 'report', task: screen.task, results })}
-        />
-      )}
-      {screen.name === 'report' && (
-        <Report
-          task={screen.task}
-          results={screen.results}
-          onRetry={() => setScreen({ name: 'task', task: screen.task })}
-          onHome={() => setScreen({ name: 'categories' })}
-        />
-      )}
-    </main>
+    <>
+      <header className="topbar">
+        <strong className="brand">JobBridge</strong>
+        <nav aria-label="Main">
+          <button className="link" aria-current={screen.name === 'dashboard' ? 'page' : undefined} onClick={() => go('dashboard')}>Dashboard</button>
+          <button className="link" aria-current={screen.name === 'categories' ? 'page' : undefined} onClick={() => go('categories')}>Tasks</button>
+        </nav>
+        <span className="who">{user.name}</span>
+        <button onClick={signOut}>Sign out</button>
+      </header>
+      <main>
+        <p className="badge">Prototype · sample data</p>
+        {screen.name === 'dashboard' && (
+          <Dashboard
+            user={user}
+            attempts={attempts}
+            onBrowse={() => go('categories')}
+            onOpen={(attempt) => setScreen({ name: 'report', attempt })}
+          />
+        )}
+        {screen.name === 'categories' && (
+          <Categories onPick={(category) => setScreen({ name: 'tasks', category })} />
+        )}
+        {screen.name === 'tasks' && (
+          <Tasks
+            category={screen.category}
+            onBack={() => go('categories')}
+            onPick={(task) => setScreen({ name: 'task', task })}
+          />
+        )}
+        {screen.name === 'task' && (
+          <TaskScreen task={screen.task} onBack={() => go('categories')} onDone={(results) => finish(screen.task, results)} />
+        )}
+        {screen.name === 'report' && (
+          <Report
+            attempt={screen.attempt}
+            onRetry={screen.task ? () => setScreen({ name: 'task', task: screen.task! }) : undefined}
+            onHome={() => go('dashboard')}
+          />
+        )}
+      </main>
+    </>
   )
 }
 
@@ -116,19 +161,18 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
   )
 }
 
-function Report({ task, results, onRetry, onHome }: { task: Task; results: CheckResult[]; onRetry: () => void; onHome: () => void }) {
+function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () => void; onHome: () => void }) {
   const [shared, setShared] = useState(false)
-  const passed = results.filter((r) => r.passed).length
-  const score = Math.round((passed / results.length) * 100)
+  const passed = attempt.results.filter((r) => r.passed).length
 
   return (
     <>
       <h1>Your skill report</h1>
-      <p className="lead">{task.title}</p>
-      <h2>Score: {score} / 100</h2>
-      <h3>Automated tests: {passed} of {results.length} passed</h3>
+      <p className="lead">{attempt.taskTitle} · {new Date(attempt.date).toLocaleDateString('en-GB')}</p>
+      <h2>Score: {attempt.score} / 100</h2>
+      <h3>Automated tests: {passed} of {attempt.results.length} passed</h3>
       <ul className="results">
-        {results.map((r) => (
+        {attempt.results.map((r) => (
           <li key={r.name}>{r.passed ? '✅' : '❌'} {r.name}</li>
         ))}
       </ul>
@@ -136,11 +180,11 @@ function Report({ task, results, onRetry, onHome }: { task: Task; results: Check
       <p>Sample text in the prototype. The real report explains code quality, structure and what to improve.</p>
       <div className="actions">
         <button className="primary" onClick={() => setShared(true)}>Share report</button>
-        <button onClick={onRetry}>Try again</button>
-        <button onClick={onHome}>Choose another task</button>
+        {onRetry && <button onClick={onRetry}>Try again</button>}
+        <button onClick={onHome}>Back to dashboard</button>
       </div>
       {shared && (
-        <p role="status">Link ready to send: jobbridge.example/report/demo-123 (sample link, not real)</p>
+        <p role="status">Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
       )}
     </>
   )
