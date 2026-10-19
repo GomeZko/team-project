@@ -47,7 +47,7 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 - Empty state: not applicable in v1, categories are fixed sample data.
 - Loading state: not applicable, data is in the page.
 - Error state: not applicable, nothing is loaded from a server.
-- Copy: "Choose a skill to prove" · "Pick a category. Each task takes 15–20 minutes." · cards "SQL", "Junior Frontend", "Java", "Junior Backend" with "1 task" / "2 tasks" / "0 tasks".
+- Copy: "Choose a skill to prove" · "Pick a category. Each task takes 15–20 minutes." · cards "SQL", "Junior Frontend", "Java", "Python", "Junior Backend" with "1 task" / "2 tasks" / "0 tasks".
 
 ### 2. Category tasks
 - Purpose: pick one task in the chosen category.
