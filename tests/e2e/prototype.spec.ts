@@ -92,3 +92,13 @@ test('Java tasks pass with or without spaces around operators', async ({ page })
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Automated tests: 3 of 3 passed' })).toBeVisible();
 });
+
+test('Python tasks give a score', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Python.*2 tasks/ }).click();
+  await page.getByRole('button', { name: /Largest number in a list/ }).click();
+  await page.getByLabel('Your solution').fill('def largest(numbers):\n    return max(numbers)');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByRole('heading', { name: 'Score: 100 / 100' })).toBeVisible();
+});

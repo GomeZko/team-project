@@ -77,6 +77,35 @@ export const categories: Category[] = [
       },
     ],
   },
+  {
+    id: 'python',
+    name: 'Python',
+    tasks: [
+      {
+        id: 'py-greet',
+        title: 'Say hello',
+        minutes: 5,
+        description: 'Complete the function greet so that it returns the text "Hello, " plus the name and "!". Example: greet("Anna") returns "Hello, Anna!".',
+        starter: 'def greet(name):\n    # your code here\n    pass',
+        checks: [
+          { name: 'Returns a value', mustContain: 'return' },
+          { name: 'Starts with Hello', mustContain: 'hello' },
+          { name: 'Ends with an exclamation mark', mustContain: '!' },
+        ],
+      },
+      {
+        id: 'py-largest',
+        title: 'Largest number in a list',
+        minutes: 5,
+        description: 'Complete the function largest so that it returns the biggest number in the list. You may use the built-in max(). Example: largest([3, 9, 2]) returns 9.',
+        starter: 'def largest(numbers):\n    # your code here\n    pass',
+        checks: [
+          { name: 'Returns a value', mustContain: 'return' },
+          { name: 'Finds the biggest number', mustContain: 'max(numbers)' },
+        ],
+      },
+    ],
+  },
   { id: 'backend', name: 'Junior Backend', tasks: [] },
 ]
 
