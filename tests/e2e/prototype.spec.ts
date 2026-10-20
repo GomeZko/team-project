@@ -102,3 +102,20 @@ test('Python tasks give a score', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Score: 100 / 100' })).toBeVisible();
 });
+
+test('the task shows its checks, and Tab adds spaces in the code box', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Python/ }).click();
+  await page.getByRole('button', { name: /Say hello/ }).click();
+  await expect(page.getByRole('heading', { name: 'What we check' })).toBeVisible();
+  await expect(page.getByRole('listitem').filter({ hasText: 'Starts with Hello' })).toBeVisible();
+  const box = page.getByLabel('Your solution');
+  await box.fill('');
+  await box.press('Tab');
+  await expect(box).toHaveValue('    ');
+  await expect(box).toBeFocused();
+  await box.press('Escape');
+  await box.press('Tab');
+  await expect(box).not.toBeFocused();
+});
