@@ -85,8 +85,8 @@ export const categories: Category[] = [
         id: 'py-greet',
         title: 'Say hello',
         minutes: 5,
-        description: 'Complete the function greet so that it returns the text "Hello, " plus the name and "!". Example: greet("Anna") returns "Hello, Anna!".',
-        starter: 'def greet(name):\n    # your code here\n    pass',
+        description: 'Complete the function greet so that it returns the text "Hello, " plus the name and "!". Example: greet("Anna") returns "Hello, Anna!". In Python, pass means "do nothing": replace it with a return line.',
+        starter: 'def greet(name):\n    # replace pass with your code\n    pass',
         checks: [
           { name: 'Returns a value', mustContain: 'return' },
           { name: 'Starts with Hello', mustContain: 'hello' },
@@ -98,7 +98,7 @@ export const categories: Category[] = [
         title: 'Largest number in a list',
         minutes: 5,
         description: 'Complete the function largest so that it returns the biggest number in the list. You may use the built-in max(). Example: largest([3, 9, 2]) returns 9.',
-        starter: 'def largest(numbers):\n    # your code here\n    pass',
+        starter: 'def largest(numbers):\n    # replace pass with your code\n    pass',
         checks: [
           { name: 'Returns a value', mustContain: 'return' },
           { name: 'Finds the biggest number', mustContain: 'max(numbers)' },
