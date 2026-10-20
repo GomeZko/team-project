@@ -17,7 +17,7 @@ export default function AddTask({ onAdd }: { onAdd: (categoryId: string, task: T
       .split('\n')
       .map((line) => line.split('|').map((part) => part.trim()))
       .filter(([name, text]) => name && text)
-      .map(([name, text]) => ({ name, mustContain: text.toLowerCase() }))
+      .map(([name, text]) => ({ name, anyOf: [text], tip: `Your solution should contain: ${text}` }))
     const mins = Number(minutes)
     if (!title.trim() || !description.trim()) return setError('Add a title and a description.')
     if (!(mins >= 5 && mins <= 60)) return setError('Time must be between 5 and 60 minutes.')
@@ -27,6 +27,7 @@ export default function AddTask({ onAdd }: { onAdd: (categoryId: string, task: T
       title: title.trim(),
       minutes: mins,
       description: description.trim(),
+      examples: [],
       starter,
       checks: parsed,
     })

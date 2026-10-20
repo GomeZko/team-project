@@ -109,7 +109,7 @@ test('the task shows its checks, and Tab adds spaces in the code box', async ({ 
   await page.getByRole('button', { name: /Python/ }).click();
   await page.getByRole('button', { name: /Say hello/ }).click();
   await expect(page.getByRole('heading', { name: 'What we check' })).toBeVisible();
-  await expect(page.getByRole('listitem').filter({ hasText: 'Starts with Hello' })).toBeVisible();
+  await expect(page.getByRole('listitem').filter({ hasText: 'Uses the name' })).toBeVisible();
   const box = page.getByLabel('Your solution');
   await box.fill('');
   await box.press('Tab');
@@ -118,4 +118,17 @@ test('the task shows its checks, and Tab adds spaces in the code box', async ({ 
   await box.press('Escape');
   await box.press('Tab');
   await expect(box).not.toBeFocused();
+});
+
+test('a failed check shows a tip, and sharing shows a badge', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Python/ }).click();
+  await page.getByRole('button', { name: /Say hello/ }).click();
+  await expect(page.getByText('greet("Anna") → "Hello, Anna!"')).toBeVisible();
+  await page.getByLabel('Your solution').fill('def greet(name):\n    return "Hello!"');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByText('Tip: Put the name into the text')).toBeVisible();
+  await page.getByRole('button', { name: 'Share report' }).click();
+  await expect(page.getByLabel(/Badge: JobBridge verified, Say hello/)).toBeVisible();
 });
