@@ -61,13 +61,14 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 
 ### 3. Task
 - Purpose: read the task and write a solution.
-- First thing seen: task title, task description, a "Your solution" box with starter code.
+- First thing seen: task title, task description, a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
 - Primary action: "Submit solution".
 - Secondary actions: "← All categories".
 - Empty state: the solution box starts with starter code, not empty.
 - Loading state: the button changes to "Running tests…" and cannot be pressed again.
 - Error state: submitting an empty box or only the starter code shows "Write your solution first. The starter code alone does not count." The person stays on the screen and keeps what they wrote.
-- Copy: "Your solution" · "Submit solution" · "Running tests…".
+- Keyboard: in the code box, Tab adds 4 spaces. Esc, then Tab, leaves the box.
+- Copy: "What we check" · "Your solution" · "Replace the comment in the starter code with your code. Tab adds spaces; press Esc, then Tab, to leave the box." · "Submit solution" · "Running tests…".
 
 ### 4. Skill report
 - Purpose: see the result and share it with an employer.
@@ -106,14 +107,23 @@ Tasks to give, one at a time:
 2. "Submit an answer to that task and find out how you did."
 3. "Send your result to an employer."
 
-### Participant A (role, no name)
-- Date:
-- Role:
-- Consent: yes / no
-- Task 1: what they tried first, where they hesitated, finished yes/no
-- Task 2:
-- Task 3:
-- Quotes (only with consent):
+### Participant A (job-seeker applying for developer internships, no name)
+- Date: [to fill in]
+- Role: applies for developer internships (Fullstack developer, Firmware engineer). Said they got no feedback after applying and were not given any test tasks.
+- Consent: yes
+- Tasks run: signed in, started a task, solved the Java "Sum of two numbers" task, then a Python task.
+- Sign-in: filled in the full name. Finished ✅
+- Java "Sum of two numbers": 100 / 100. Finished ✅
+- Python task: first 33 / 100, then 100 / 100 after changing the solution. Finished ✅
+- What they noticed (notes, not exact words):
+  - The Python check only looked for "hello" and "!", not whether the code works.
+  - Did not know what `pass` in the starter code means, or that it should be replaced.
+  - No tips: the checks are hidden, so they did not know what the solution must contain. Wanted to see the instructions and conditions.
+  - The task was not understandable and did not give full information.
+  - In the code box, Tab moved to the next element instead of adding spaces. **[our note: interpretation of "While Tab switches label"]**
+  - In the task author form, the field "Checks, one per line: test name | …" was confusing.
+  - Would like a report or a badge to share with people.
+- Quotes: none written down word for word.
 
 ### Participant B (role, no name)
 - Date:
@@ -127,6 +137,9 @@ Tasks to give, one at a time:
 ## Changes made after testing
 At least three. For each: what we saw or heard, and what we change.
 
-1.
-2.
-3.
+1. **Show what is checked.** Participant A said there were no tips and the checks were hidden. The task screen now lists "What we check" before submitting, with a hint under "Your solution". PR #26.
+2. **Explain `pass` in Python.** Participant A did not know about `pass`. The Python starter code now says `# replace pass with your code`, and the task text explains it. PR #26.
+3. **Tab in the code box.** Participant A's Tab key left the code box. Tab now adds 4 spaces; Esc, then Tab, leaves the box, so keyboard users are not trapped. PR #26.
+4. **Clearer author form.** Participant A was confused by the "Checks" field. It now has a short label and a hint with an example. PR #26.
+5. **Be honest about the checks.** Participant A saw that the Python check only looked for "hello" and "!". The report now says the prototype checks look for key parts of the code and do not run it. Running real tests is planned for the real version.
+6. **Later (v2 idea, on the board):** a shareable badge for the report, as Participant A asked.
