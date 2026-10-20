@@ -61,7 +61,7 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 
 ### 3. Task
 - Purpose: read the task and write a solution.
-- First thing seen: task title, task description, a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
+- First thing seen: task title, task description, an "Examples" list (input → expected result), a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
 - Primary action: "Submit solution".
 - Secondary actions: "← All categories".
 - Empty state: the solution box starts with starter code, not empty.
@@ -141,5 +141,6 @@ At least three. For each: what we saw or heard, and what we change.
 2. **Explain `pass` in Python.** Participant A did not know about `pass`. The Python starter code now says `# replace pass with your code`, and the task text explains it. PR #26.
 3. **Tab in the code box.** Participant A's Tab key left the code box. Tab now adds 4 spaces; Esc, then Tab, leaves the box, so keyboard users are not trapped. PR #26.
 4. **Clearer author form.** Participant A was confused by the "Checks" field. It now has a short label and a hint with an example. PR #26.
-5. **Be honest about the checks.** Participant A saw that the Python check only looked for "hello" and "!". The report now says the prototype checks look for key parts of the code and do not run it. Running real tests is planned for the real version.
-6. **Later (v2 idea, on the board):** a shareable badge for the report, as Participant A asked.
+5. **Stronger checks and honest wording.** Participant A saw that the Python check only looked for "hello" and "!". The report now says the prototype checks look for key parts of the code and do not run it (PR #26). Checks now accept several correct forms (for example a loop instead of max()), fail when `pass` is left in, and the greeting must use the name (PR #29). Running real tests is planned for the real version.
+6. **Fuller task information.** Participant A said the task did not give full information. Every task now has an "Examples" block with input and expected result, and every failed check in the report shows a tip (PR #29).
+7. **Shareable badge.** Participant A wanted a report or badge to share. After "Share report", the prototype shows a badge with the task and score to put on a CV, LinkedIn or GitHub (PR #29).

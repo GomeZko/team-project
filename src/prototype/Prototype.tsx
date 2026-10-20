@@ -196,6 +196,16 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
       <button className="link" onClick={onBack}>← All categories</button>
       <h1>{task.title}</h1>
       <p>{task.description}</p>
+      {task.examples.length > 0 && (
+        <>
+          <h2>Examples</h2>
+          <ul className="examples">
+            {task.examples.map((ex) => (
+              <li key={ex}><code>{ex}</code></li>
+            ))}
+          </ul>
+        </>
+      )}
       <h2>What we check</h2>
       <ul className="checklist">
         {task.checks.map((c) => (
@@ -233,7 +243,10 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
       <h3>Automated tests: {passed} of {attempt.results.length} passed</h3>
       <ul className="results">
         {attempt.results.map((r) => (
-          <li key={r.name}>{r.passed ? '✅' : '❌'} {r.name}</li>
+          <li key={r.name}>
+            {r.passed ? '✅' : '❌'} {r.name}
+            {r.tip && <span className="tip"> Tip: {r.tip}</span>}
+          </li>
         ))}
       </ul>
       <h3>AI review</h3>
@@ -245,7 +258,13 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
         <button onClick={onHome}>Back to dashboard</button>
       </div>
       {shared && (
-        <p role="status">Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
+        <div role="status">
+          <p>Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
+          <p className="share-badge" aria-label={`Badge: JobBridge verified, ${attempt.taskTitle}, ${attempt.score} / 100`}>
+            <strong>JobBridge</strong> {attempt.taskTitle} · {attempt.score}/100
+          </p>
+          <p className="hint">Put this badge on your CV, LinkedIn or GitHub profile.</p>
+        </div>
       )}
     </>
   )
