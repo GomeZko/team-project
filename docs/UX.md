@@ -108,7 +108,7 @@ Tasks to give, one at a time:
 3. "Send your result to an employer."
 
 ### Participant A (job-seeker applying for developer internships, no name)
-- Date: [to fill in]
+- Date: 19.10.2026
 - Role: applies for developer internships (Fullstack developer, Firmware engineer). Said they got no feedback after applying and were not given any test tasks.
 - Consent: yes
 - Tasks run: signed in, started a task, solved the Java "Sum of two numbers" task, then a Python task.
