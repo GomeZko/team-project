@@ -2,18 +2,19 @@
 
 Written in words so an agent can build a prototype in one pass and a tester can follow it.
 
-v1 covers the job-seeker (see PRODUCT.md). Core stories: S2 choose a category, S3 open a task, S4 submit a solution and see test results. The prototype also shows a demo sign-in (S1), the report and sharing (S6, S7) and history (S8) with sample data, plus a task author role that adds tasks. The real AI review (S5) is not in the prototype.
+v1 covers the job-seeker (see PRODUCT.md). Core stories: S2 choose a category, S3 open a task, S4 submit a solution and see test results. The prototype has real sign-in (S1, Supabase) and also shows the report and sharing (S6, S7) and history (S8) with sample data, plus a task author role that adds tasks. The real AI review (S5) is not in the prototype.
 
 All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" · "History" (job-seeker) or "Add task" (author) · the user's name · "Sign out".
 
-### 0. Sign in (demo)
-- Purpose: enter the prototype as a job-seeker or a task author.
-- First thing seen: "JobBridge", fields "Name" and "Email", a choice "I am: looking for a developer job / a task author".
-- Primary action: "Sign in".
+### 0. Sign in and create an account (S1)
+- Purpose: create an account or sign in, as a job-seeker or a task author. Accounts are real (Supabase, email + password).
+- First thing seen: "JobBridge", heading "Sign in", fields "Email" and "Password", button "Sign in", link "Create an account".
+- "Create an account" shows fields "Name", "Email", "Password", the choice "I am: looking for a developer job / a task author" and the button "Create account". The link "I already have an account" goes back.
+- Primary action: "Sign in" or "Create account". After success: the dashboard. The person stays signed in after a reload until "Sign out".
 - Empty state: not applicable.
-- Loading state: not applicable, nothing is sent to a server.
-- Error state: "Enter your name and a valid email."
-- Copy: "Demo only: no password, use a made-up name and email. Data stays in this browser."
+- Loading state: the button changes to "Signing in…" or "Creating account…" and cannot be pressed again.
+- Error states: "Enter a valid email and your password." · "Enter your name, a valid email and a password of at least 6 characters." · "Wrong email or password." · "An account with this email already exists. Sign in instead." · "Could not reach the server. Check your connection and try again."
+- Copy: "Prototype: use a made-up name. Tasks and reports stay in this browser for now."
 
 ### 0a. Dashboard (job-seeker)
 - Purpose: see progress and start a task.

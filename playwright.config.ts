@@ -14,5 +14,12 @@ export default defineConfig({
   ],
   webServer: process.env.BASE_URL
     ? undefined
-    : { command: 'npm run dev', url: baseURL, reuseExistingServer: true, timeout: 120_000 },
+    : {
+        command: 'npm run dev',
+        url: baseURL,
+        reuseExistingServer: true,
+        timeout: 120_000,
+        // Dummy keys: the browser tests answer every Supabase call themselves (tests/e2e/supabaseMock.ts).
+        env: { VITE_SUPABASE_URL: 'http://supabase.test', VITE_SUPABASE_ANON_KEY: 'test-anon-key' },
+      },
 });

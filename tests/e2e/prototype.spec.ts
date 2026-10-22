@@ -1,20 +1,15 @@
 import { test, expect, type Page } from '@playwright/test';
+import { mockSupabase, signUp } from './supabaseMock';
 
 // G4 prototype: the main flow from docs/UX.md works with sample data.
-async function signIn(page: Page, name = 'Test Seeker', author = false) {
-  await page.goto('/?prototype');
-  await page.getByLabel('Name').fill(name);
-  await page.getByLabel('Email').fill(`${author ? 'author' : 'seeker'}@example.com`);
-  if (author) await page.getByLabel('a task author').check();
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
-}
-
-test('sign-in needs a name and a valid email', async ({ page }) => {
-  await page.goto('/?prototype');
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page.getByRole('alert')).toHaveText('Enter your name and a valid email.');
+// Sign-in itself is tested in auth.spec.ts. Here every test starts with a fresh account.
+test.beforeEach(async ({ page }) => {
+  await mockSupabase(page);
 });
+
+async function signIn(page: Page, name = 'Test Seeker', author = false) {
+  await signUp(page, { name, email: `${author ? 'author' : 'seeker'}@example.com`, author });
+}
 
 test('a job-seeker submits a SQL solution and the report shows on the dashboard', async ({ page }) => {
   await signIn(page);

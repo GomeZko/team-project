@@ -1,13 +1,14 @@
-// Prototype storage. Everything stays in this browser (localStorage): no server, no database.
-// There are no passwords: the demo sign-in only remembers a display name, an email and a role.
+// Prototype storage. Accounts are in Supabase (see SignIn.tsx), but attempts and tasks
+// still stay in this browser (localStorage) until a story saves them in the database.
+import type { AppUser } from '../lib/auth'
 import type { CheckResult, Task } from './data'
 
-export type Role = 'seeker' | 'author'
-export type User = { name: string; email: string; role: Role }
+export type { Role } from '../lib/auth'
+export type User = AppUser
 export type Attempt = { id: string; taskId: string; taskTitle: string; results: CheckResult[]; score: number; date: string }
 
-const USER_KEY = 'jobbridge-demo-user'
-const ATTEMPTS_KEY = 'jobbridge-demo-attempts'
+// One list of attempts per account, so two people on the same laptop do not see each other's reports.
+const attemptsKey = (userId: string) => `jobbridge-attempts-${userId}`
 const TASKS_KEY = 'jobbridge-demo-tasks'
 
 function read<T>(key: string, fallback: T): T {
@@ -27,16 +28,19 @@ function write(key: string, value: unknown) {
   } catch {}
 }
 
-export const loadUser = () => read<User | null>(USER_KEY, null)
-export const saveUser = (user: User | null) => write(USER_KEY, user)
-
-export const loadAttempts = () => read<Attempt[]>(ATTEMPTS_KEY, [])
-export function addAttempt(attempts: Attempt[], taskId: string, taskTitle: string, results: CheckResult[]): Attempt[] {
+export const loadAttempts = (userId: string) => read<Attempt[]>(attemptsKey(userId), [])
+export function addAttempt(
+  userId: string,
+  attempts: Attempt[],
+  taskId: string,
+  taskTitle: string,
+  results: CheckResult[],
+): Attempt[] {
   const passed = results.filter((r) => r.passed).length
   const score = Math.round((passed / results.length) * 100)
   const attempt: Attempt = { id: `${Date.now()}`, taskId, taskTitle, results, score, date: new Date().toISOString() }
   const next = [attempt, ...attempts]
-  write(ATTEMPTS_KEY, next)
+  write(attemptsKey(userId), next)
   return next
 }
 
