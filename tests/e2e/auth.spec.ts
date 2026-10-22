@@ -4,7 +4,7 @@ import { mockSupabase, signIn, signUp } from './supabaseMock';
 // S1 / FR1: a visitor can register and sign in. Supabase is replaced by a fake, see supabaseMock.ts.
 test('a new visitor sees the sign-in screen and can switch to creating an account', async ({ page }) => {
   await mockSupabase(page);
-  await page.goto('/?prototype');
+  await page.goto('/');
   await expect(page.getByLabel('Email')).toBeVisible();
   await expect(page.getByLabel('Password')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
@@ -31,7 +31,7 @@ test('a task author creates an account and sees My tasks', async ({ page }) => {
 
 test('creating an account checks the form before sending it', async ({ page }) => {
   const auth = await mockSupabase(page);
-  await page.goto('/?prototype');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Create an account' }).click();
   await page.getByLabel('Name').fill('Test Seeker');
   await page.getByLabel('Email').fill('seeker@example.com');
@@ -46,7 +46,7 @@ test('creating an account checks the form before sending it', async ({ page }) =
 test('an email can only be registered once', async ({ page }) => {
   const auth = await mockSupabase(page);
   auth.addAccount({ name: 'Test Seeker', email: 'seeker@example.com', password: 'secret123', role: 'seeker' });
-  await page.goto('/?prototype');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Create an account' }).click();
   await page.getByLabel('Name').fill('Someone Else');
   await page.getByLabel('Email').fill('seeker@example.com');
@@ -58,7 +58,7 @@ test('an email can only be registered once', async ({ page }) => {
 test('sign-in with a wrong password shows an error and keeps the email', async ({ page }) => {
   const auth = await mockSupabase(page);
   auth.addAccount({ name: 'Test Seeker', email: 'seeker@example.com', password: 'secret123', role: 'seeker' });
-  await page.goto('/?prototype');
+  await page.goto('/');
   await signIn(page, 'seeker@example.com', 'wrong-password');
   await expect(page.getByRole('alert')).toHaveText('Wrong email or password.');
   await expect(page.getByLabel('Email')).toHaveValue('seeker@example.com');
@@ -66,7 +66,7 @@ test('sign-in with a wrong password shows an error and keeps the email', async (
 
 test('sign-in with an empty form shows an error', async ({ page }) => {
   await mockSupabase(page);
-  await page.goto('/?prototype');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.getByRole('alert')).toHaveText('Enter a valid email and your password.');
 });
@@ -74,7 +74,7 @@ test('sign-in with an empty form shows an error', async ({ page }) => {
 test('an existing user signs in with the name and role they chose', async ({ page }) => {
   const auth = await mockSupabase(page);
   auth.addAccount({ name: 'Test Author', email: 'author@example.com', password: 'secret123', role: 'author' });
-  await page.goto('/?prototype');
+  await page.goto('/');
   await signIn(page, 'author@example.com', 'secret123');
   await expect(page.getByRole('heading', { name: 'Hi, Test Author' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add a task' })).toBeVisible();
@@ -90,7 +90,7 @@ test('the button says "Signing in…" and cannot be pressed twice while waiting'
     await held;
     await route.fallback();
   });
-  await page.goto('/?prototype');
+  await page.goto('/');
   await signIn(page, 'seeker@example.com', 'secret123');
   await expect(page.getByRole('button', { name: 'Signing in…' })).toBeDisabled();
   release();

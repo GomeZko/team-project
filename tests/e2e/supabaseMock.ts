@@ -101,7 +101,7 @@ type NewAccount = { name: string; email: string; password?: string; author?: boo
 
 // Creates an account through the real form and lands on the dashboard.
 export async function signUp(page: Page, { name, email, password = 'secret123', author = false }: NewAccount) {
-  await page.goto('/?prototype');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Create an account' }).click();
   await page.getByLabel('Name').fill(name);
   await page.getByLabel('Email').fill(email);
