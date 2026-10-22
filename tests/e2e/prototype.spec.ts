@@ -87,3 +87,43 @@ test('Java tasks pass with or without spaces around operators', async ({ page })
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Automated tests: 3 of 3 passed' })).toBeVisible();
 });
+
+test('Python tasks give a score', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Python.*2 tasks/ }).click();
+  await page.getByRole('button', { name: /Largest number in a list/ }).click();
+  await page.getByLabel('Your solution').fill('def largest(numbers):\n    return max(numbers)');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByRole('heading', { name: 'Score: 100 / 100' })).toBeVisible();
+});
+
+test('the task shows its checks, and Tab adds spaces in the code box', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Python/ }).click();
+  await page.getByRole('button', { name: /Say hello/ }).click();
+  await expect(page.getByRole('heading', { name: 'What we check' })).toBeVisible();
+  await expect(page.getByRole('listitem').filter({ hasText: 'Uses the name' })).toBeVisible();
+  const box = page.getByLabel('Your solution');
+  await box.fill('');
+  await box.press('Tab');
+  await expect(box).toHaveValue('    ');
+  await expect(box).toBeFocused();
+  await box.press('Escape');
+  await box.press('Tab');
+  await expect(box).not.toBeFocused();
+});
+
+test('a failed check shows a tip, and sharing shows a badge', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Tasks' }).click();
+  await page.getByRole('button', { name: /Python/ }).click();
+  await page.getByRole('button', { name: /Say hello/ }).click();
+  await expect(page.getByText('greet("Anna") → "Hello, Anna!"')).toBeVisible();
+  await page.getByLabel('Your solution').fill('def greet(name):\n    return "Hello!"');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByText('Tip: Put the name into the text')).toBeVisible();
+  await page.getByRole('button', { name: 'Share report' }).click();
+  await expect(page.getByLabel(/Badge: JobBridge verified, Say hello/)).toBeVisible();
+});

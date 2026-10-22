@@ -48,7 +48,7 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 - Empty state: not applicable in v1, categories are fixed sample data.
 - Loading state: not applicable, data is in the page.
 - Error state: not applicable, nothing is loaded from a server.
-- Copy: "Choose a skill to prove" · "Pick a category. Each task takes 15–20 minutes." · cards "SQL", "Junior Frontend", "Java", "Junior Backend" with "1 task" / "2 tasks" / "0 tasks".
+- Copy: "Choose a skill to prove" · "Pick a category. Each task takes 15–20 minutes." · cards "SQL", "Junior Frontend", "Java", "Python", "Junior Backend" with "1 task" / "2 tasks" / "0 tasks".
 
 ### 2. Category tasks
 - Purpose: pick one task in the chosen category.
@@ -62,13 +62,14 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 
 ### 3. Task
 - Purpose: read the task and write a solution.
-- First thing seen: task title, task description, a "Your solution" box with starter code.
+- First thing seen: task title, task description, an "Examples" list (input → expected result), a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
 - Primary action: "Submit solution".
 - Secondary actions: "← All categories".
 - Empty state: the solution box starts with starter code, not empty.
 - Loading state: the button changes to "Running tests…" and cannot be pressed again.
 - Error state: submitting an empty box or only the starter code shows "Write your solution first. The starter code alone does not count." The person stays on the screen and keeps what they wrote.
-- Copy: "Your solution" · "Submit solution" · "Running tests…".
+- Keyboard: in the code box, Tab adds 4 spaces. Esc, then Tab, leaves the box.
+- Copy: "What we check" · "Your solution" · "Replace the comment in the starter code with your code. Tab adds spaces; press Esc, then Tab, to leave the box." · "Submit solution" · "Running tests…".
 
 ### 4. Skill report
 - Purpose: see the result and share it with an employer.
@@ -107,14 +108,23 @@ Tasks to give, one at a time:
 2. "Submit an answer to that task and find out how you did."
 3. "Send your result to an employer."
 
-### Participant A (role, no name)
-- Date:
-- Role:
-- Consent: yes / no
-- Task 1: what they tried first, where they hesitated, finished yes/no
-- Task 2:
-- Task 3:
-- Quotes (only with consent):
+### Participant A (job-seeker applying for developer internships, no name)
+- Date: 19.10.2026
+- Role: applies for developer internships (Fullstack developer, Firmware engineer). Said they got no feedback after applying and were not given any test tasks.
+- Consent: yes
+- Tasks run: signed in, started a task, solved the Java "Sum of two numbers" task, then a Python task.
+- Sign-in: filled in the full name. Finished ✅
+- Java "Sum of two numbers": 100 / 100. Finished ✅
+- Python task: first 33 / 100, then 100 / 100 after changing the solution. Finished ✅
+- What they noticed (notes, not exact words):
+  - The Python check only looked for "hello" and "!", not whether the code works.
+  - Did not know what `pass` in the starter code means, or that it should be replaced.
+  - No tips: the checks are hidden, so they did not know what the solution must contain. Wanted to see the instructions and conditions.
+  - The task was not understandable and did not give full information.
+  - In the code box, Tab moved to the next element instead of adding spaces. **[our note: interpretation of "While Tab switches label"]**
+  - In the task author form, the field "Checks, one per line: test name | …" was confusing.
+  - Would like a report or a badge to share with people.
+- Quotes: none written down word for word.
 
 ### Participant B (role, no name)
 - Date:
@@ -128,6 +138,10 @@ Tasks to give, one at a time:
 ## Changes made after testing
 At least three. For each: what we saw or heard, and what we change.
 
-1.
-2.
-3.
+1. **Show what is checked.** Participant A said there were no tips and the checks were hidden. The task screen now lists "What we check" before submitting, with a hint under "Your solution". PR #26.
+2. **Explain `pass` in Python.** Participant A did not know about `pass`. The Python starter code now says `# replace pass with your code`, and the task text explains it. PR #26.
+3. **Tab in the code box.** Participant A's Tab key left the code box. Tab now adds 4 spaces; Esc, then Tab, leaves the box, so keyboard users are not trapped. PR #26.
+4. **Clearer author form.** Participant A was confused by the "Checks" field. It now has a short label and a hint with an example. PR #26.
+5. **Stronger checks and honest wording.** Participant A saw that the Python check only looked for "hello" and "!". The report now says the prototype checks look for key parts of the code and do not run it (PR #26). Checks now accept several correct forms (for example a loop instead of max()), fail when `pass` is left in, and the greeting must use the name (PR #29). Running real tests is planned for the real version.
+6. **Fuller task information.** Participant A said the task did not give full information. Every task now has an "Examples" block with input and expected result, and every failed check in the report shows a tip (PR #29).
+7. **Shareable badge.** Participant A wanted a report or badge to share. After "Share report", the prototype shows a badge with the task and score to put on a CV, LinkedIn or GitHub (PR #29).

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { toAppUser } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { runChecks, withCustomTasks, type Category, type CheckResult, type Task } from './data'
@@ -178,6 +178,19 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
   const [solution, setSolution] = useState(task.starter)
   const [error, setError] = useState('')
   const [running, setRunning] = useState(false)
+  // Tab adds spaces in the code box (test A). Esc, then Tab, leaves the box, so keyboard users are not trapped.
+  const [leaving, setLeaving] = useState(false)
+
+  function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Escape') return setLeaving(true)
+    if (e.key !== 'Tab' || e.shiftKey || leaving) return
+    e.preventDefault()
+    const box = e.currentTarget
+    const { selectionStart: start, selectionEnd: end } = box
+    const next = solution.slice(0, start) + '    ' + solution.slice(end)
+    setSolution(next)
+    requestAnimationFrame(() => box.setSelectionRange(start + 4, start + 4))
+  }
 
   function submit() {
     if (solution.trim() === '' || solution.trim() === task.starter.trim()) {
@@ -194,8 +207,33 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
       <button className="link" onClick={onBack}>← All categories</button>
       <h1>{task.title}</h1>
       <p>{task.description}</p>
+      {task.examples.length > 0 && (
+        <>
+          <h2>Examples</h2>
+          <ul className="examples">
+            {task.examples.map((ex) => (
+              <li key={ex}><code>{ex}</code></li>
+            ))}
+          </ul>
+        </>
+      )}
+      <h2>What we check</h2>
+      <ul className="checklist">
+        {task.checks.map((c) => (
+          <li key={c.name}>{c.name}</li>
+        ))}
+      </ul>
       <label htmlFor="solution">Your solution</label>
-      <textarea id="solution" rows={8} value={solution} onChange={(e) => setSolution(e.target.value)} />
+      <p id="solution-hint" className="hint">Replace the comment in the starter code with your code. Tab adds spaces; press Esc, then Tab, to leave the box.</p>
+      <textarea
+        id="solution"
+        rows={8}
+        value={solution}
+        aria-describedby="solution-hint"
+        onChange={(e) => setSolution(e.target.value)}
+        onKeyDown={onKeyDown}
+        onBlur={() => setLeaving(false)}
+      />
       {error && <p className="error" role="alert">{error}</p>}
       <button className="primary" onClick={submit} disabled={running}>
         {running ? 'Running tests…' : 'Submit solution'}
@@ -216,18 +254,28 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
       <h3>Automated tests: {passed} of {attempt.results.length} passed</h3>
       <ul className="results">
         {attempt.results.map((r) => (
-          <li key={r.name}>{r.passed ? '✅' : '❌'} {r.name}</li>
+          <li key={r.name}>
+            {r.passed ? '✅' : '❌'} {r.name}
+            {r.tip && <span className="tip"> Tip: {r.tip}</span>}
+          </li>
         ))}
       </ul>
       <h3>AI review</h3>
       <p>Sample text in the prototype. The real report explains code quality, structure and what to improve.</p>
+      <p className="hint">Prototype: the checks look for key parts of your code, they do not run it yet. The real version runs your code against tests.</p>
       <div className="actions">
         <button className="primary" onClick={() => setShared(true)}>Share report</button>
         {onRetry && <button onClick={onRetry}>Try again</button>}
         <button onClick={onHome}>Back to dashboard</button>
       </div>
       {shared && (
-        <p role="status">Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
+        <div role="status">
+          <p>Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
+          <p className="share-badge" aria-label={`Badge: JobBridge verified, ${attempt.taskTitle}, ${attempt.score} / 100`}>
+            <strong>JobBridge</strong> {attempt.taskTitle} · {attempt.score}/100
+          </p>
+          <p className="hint">Put this badge on your CV, LinkedIn or GitHub profile.</p>
+        </div>
       )}
     </>
   )

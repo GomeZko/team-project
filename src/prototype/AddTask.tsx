@@ -17,7 +17,7 @@ export default function AddTask({ onAdd }: { onAdd: (categoryId: string, task: T
       .split('\n')
       .map((line) => line.split('|').map((part) => part.trim()))
       .filter(([name, text]) => name && text)
-      .map(([name, text]) => ({ name, mustContain: text.toLowerCase() }))
+      .map(([name, text]) => ({ name, anyOf: [text], tip: `Your solution should contain: ${text}` }))
     const mins = Number(minutes)
     if (!title.trim() || !description.trim()) return setError('Add a title and a description.')
     if (!(mins >= 5 && mins <= 60)) return setError('Time must be between 5 and 60 minutes.')
@@ -27,6 +27,7 @@ export default function AddTask({ onAdd }: { onAdd: (categoryId: string, task: T
       title: title.trim(),
       minutes: mins,
       description: description.trim(),
+      examples: [],
       starter,
       checks: parsed,
     })
@@ -51,8 +52,12 @@ export default function AddTask({ onAdd }: { onAdd: (categoryId: string, task: T
         <textarea id="description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
         <label htmlFor="starter">Starter code (optional)</label>
         <textarea id="starter" rows={4} value={starter} onChange={(e) => setStarter(e.target.value)} />
-        <label htmlFor="checks">Checks, one per line: test name | text the solution must contain</label>
-        <textarea id="checks" rows={4} value={checks} onChange={(e) => setChecks(e.target.value)} placeholder="Uses GROUP BY | group by" />
+        <label htmlFor="checks">Checks</label>
+        <p id="checks-hint" className="hint">
+          One check per line. Write what the check is called, then a | sign, then a word or code the solution must contain.
+          Example: <code>Groups by customer | group by</code>
+        </p>
+        <textarea id="checks" rows={4} value={checks} aria-describedby="checks-hint" onChange={(e) => setChecks(e.target.value)} placeholder="Groups by customer | group by" />
         {error && <p className="error" role="alert">{error}</p>}
         <button className="primary" type="submit">Publish task</button>
       </form>
