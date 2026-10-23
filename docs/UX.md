@@ -85,7 +85,7 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 
 Main flow: from choosing a skill to a report the person can share.
 
-1. **Sign in**: enter a made-up name and email, keep "looking for a developer job", select "Sign in".
+1. **Create an account**: on the start page select "Create an account", enter a made-up name, an email and a password, keep "looking for a developer job", select "Create account".
 2. **Dashboard**: select "Start a task".
 3. **Choose a skill**: select "SQL".
 4. **Category tasks**: select "Top 3 customers by order total".
@@ -95,7 +95,7 @@ Main flow: from choosing a skill to a report the person can share.
 8. **Skill report**: select "Share report" and see the link to send.
 
 ## Prototype
-Link: https://team-project-azure-pi.vercel.app/?prototype
+Link: https://team-project-azure-pi.vercel.app (the start page; old /?prototype links open the same page)
 Tool used: our own app (Vite + React) with sample data, built with Claude Code. No database, no real AI. Code: `src/prototype/`.
 
 ## Hallway tests
