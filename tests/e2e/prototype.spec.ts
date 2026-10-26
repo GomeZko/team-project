@@ -127,3 +127,20 @@ test('a failed check shows a tip, and sharing shows a badge', async ({ page }) =
   await page.getByRole('button', { name: 'Share report' }).click();
   await expect(page.getByLabel(/Badge: JobBridge verified, Say hello/)).toBeVisible();
 });
+
+// Found by the agent with Playwright MCP (G7): on a phone the top bar pushed Sign out off the screen.
+test('on a phone the page does not scroll sideways and Sign out is visible', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await signIn(page);
+  await page.getByRole('button', { name: 'Start a task' }).click();
+  await page.getByRole('button', { name: /SQL/ }).click();
+  await page.getByRole('button', { name: /Top 3 customers/ }).click();
+  await page.getByLabel('Your solution').fill('SELECT 1 GROUP BY customer_id');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await expect(page.getByRole('heading', { name: 'Your skill report' })).toBeVisible();
+  for (const screen of ['Dashboard', 'History']) {
+    await page.getByRole('button', { name: screen, exact: true }).click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+    await expect(page.getByRole('button', { name: 'Sign out' })).toBeInViewport({ ratio: 1 });
+  }
+});

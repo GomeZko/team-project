@@ -53,7 +53,7 @@ label { display: block; font-weight: 600; margin: 1rem 0 0.25rem; }
 textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, monospace; margin-bottom: 1rem; }
 .error { color: #a40e26; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
-.topbar { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid #d0d7de; }
+.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid #d0d7de; }
 .topbar nav { display: flex; gap: 1rem; flex: 1; }
 .topbar [aria-current='page'] { font-weight: 700; text-decoration: underline; }
 .brand { font-size: 1.15rem; }
@@ -67,6 +67,8 @@ legend { font-weight: 600; }
 label.inline { display: flex; gap: 0.5rem; font-weight: 400; margin: 0.4rem 0; }
 .hint { color: #57606a; font-size: 0.9rem; margin-top: 1.5rem; }
 .history { width: 100%; border-collapse: collapse; }
+/* On a phone the history table scrolls inside its box, not the whole page. */
+.table-scroll { overflow-x: auto; position: relative; }
 .history caption { text-align: left; color: #57606a; margin-bottom: 0.5rem; }
 .history th, .history td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #d0d7de; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }

@@ -25,3 +25,6 @@ test-results
 # Local env files (keep the example)
 .env.*
 !.env.example
+
+# Screenshots and logs from the Playwright MCP browser
+.playwright-mcp
