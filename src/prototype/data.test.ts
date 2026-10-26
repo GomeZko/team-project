@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { categories, runChecks } from './data'
+import { categories, runChecks, searchTasks } from './data'
 
 const task = (id: string) => categories.flatMap((c) => c.tasks).find((t) => t.id === id)!
 const score = (id: string, code: string) => runChecks(task(id), code).filter((r) => r.passed).length
@@ -33,5 +33,18 @@ describe('runChecks catches weak solutions (hallway test A)', () => {
 
   it('accepts a loop instead of max()', () => {
     expect(score('py-largest', 'def largest(numbers):\n    best = numbers[0]\n    for n in numbers:\n        if n > best:\n            best = n\n    return best')).toBe(2)
+  })
+})
+
+describe('searchTasks (MCP tool search_items)', () => {
+  it('finds tasks by category, title or description, ignoring case', () => {
+    expect(searchTasks('python').map((t) => t.id)).toEqual(['py-greet', 'py-largest'])
+    expect(searchTasks('COUNTER').map((t) => t.id)).toEqual(['fe-counter'])
+    expect(searchTasks('orders table')[0]).toMatchObject({ id: 'sql-top-customers', category: 'SQL', minutes: 15 })
+  })
+
+  it('returns nothing for an unknown word, and every task for an empty query', () => {
+    expect(searchTasks('kotlin')).toEqual([])
+    expect(searchTasks('  ')).toHaveLength(categories.flatMap((c) => c.tasks).length)
   })
 })

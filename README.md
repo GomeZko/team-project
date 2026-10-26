@@ -46,7 +46,16 @@ Each milestone is one epic on the board. Details in [docs/REQUIREMENTS.md](docs/
 Details in [Team-agreement.md](Team-agreement.md). How we use branches and pull requests: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Agent-ready
-The product exposes one MCP tool in `mcp/server.ts`. Register it in your agent with `.vscode/mcp.json` (Copilot) or `.mcp.json` (Claude Code). Cline stores MCP servers per machine, so add it once in the Cline settings panel.
+The product exposes MCP tools in `mcp/server.ts` (start it with `npm run mcp`):
+
+| Tool | Input | What it returns |
+|---|---|---|
+| `search_items` | `query`, e.g. `"sql"`, `"python"`, `"counter"` | The coding tasks whose category, title or description contain the query: category, time in minutes, description and the checks each task runs. An empty query lists every task. |
+| `product_statement` | none | The product statement and baseline metric from docs/PRODUCT.md. |
+
+Try it: ask your agent "Which JobBridge tasks are there for Python?". Tasks that authors add in the app stay in their browser, so the tool only finds the sample tasks.
+
+Register it in your agent with `.vscode/mcp.json` (Copilot) or `.mcp.json` (Claude Code). Cline stores MCP servers per machine, so add it once in the Cline settings panel.
 
 ## Gates
 Run the prompt in `docs/GATE-REPORT-PROMPT.md` with your agent before every Moodle submission. The output is `docs/GATE-REPORT.md`.

@@ -145,3 +145,14 @@ export function runChecks(task: Task, solution: string): CheckResult[] {
 export function withCustomTasks(custom: { categoryId: string; task: Task }[]): Category[] {
   return categories.map((c) => ({ ...c, tasks: [...c.tasks, ...custom.filter((t) => t.categoryId === c.id).map((t) => t.task)] }))
 }
+
+// For the MCP tool search_items (mcp/server.ts): the sample tasks whose category, title or
+// description contain the query, ignoring case. An empty query lists every task.
+export function searchTasks(query: string) {
+  const q = query.trim().toLowerCase()
+  return categories.flatMap((c) =>
+    c.tasks
+      .filter((t) => `${c.name} ${t.title} ${t.description}`.toLowerCase().includes(q))
+      .map((t) => ({ id: t.id, category: c.name, title: t.title, minutes: t.minutes, description: t.description, checks: t.checks.map((ch) => ch.name) })),
+  )
+}
