@@ -180,6 +180,9 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
   const [running, setRunning] = useState(false)
   // Tab adds spaces in the code box (test A). Esc, then Tab, leaves the box, so keyboard users are not trapped.
   const [leaving, setLeaving] = useState(false)
+  // If the person leaves this screen while the tests run, cancel them, so the report does not jump in later.
+  const timer = useRef<number | undefined>(undefined)
+  useEffect(() => () => clearTimeout(timer.current), [])
 
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Escape') return setLeaving(true)
@@ -199,7 +202,7 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
     }
     setError('')
     setRunning(true)
-    setTimeout(() => onDone(runChecks(task, solution)), 800)
+    timer.current = window.setTimeout(() => onDone(runChecks(task, solution)), 800)
   }
 
   return (

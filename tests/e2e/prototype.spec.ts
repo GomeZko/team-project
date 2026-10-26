@@ -144,3 +144,16 @@ test('on a phone the page does not scroll sideways and Sign out is visible', asy
     await expect(page.getByRole('button', { name: 'Sign out' })).toBeInViewport({ ratio: 1 });
   }
 });
+
+// Found by the agent with Playwright MCP (G7): leaving while tests ran still opened the report a second later.
+test('leaving a task while its tests run keeps you on the screen you chose', async ({ page }) => {
+  await signIn(page);
+  await page.getByRole('button', { name: 'Start a task' }).click();
+  await page.getByRole('button', { name: /SQL/ }).click();
+  await page.getByRole('button', { name: /Top 3 customers/ }).click();
+  await page.getByLabel('Your solution').fill('SELECT 1 GROUP BY customer_id');
+  await page.getByRole('button', { name: 'Submit solution' }).click();
+  await page.getByRole('button', { name: 'History', exact: true }).click();
+  await page.waitForTimeout(1500);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('History');
+});

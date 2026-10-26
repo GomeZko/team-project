@@ -37,4 +37,4 @@ Bugs found:
 | # | Bug | How to repeat | Status |
 |---|---|---|---|
 | 1 | On a phone the top bar is wider than the screen: the page scrolls sideways and **Sign out** is off-screen. The History table also pushed the page wider. | Window 375 px wide, sign in: the page is 468 px wide. | Fixed in branch `fix/phone-layout` (PR labelled `agent-found`). Test: "on a phone the page does not scroll sideways and Sign out is visible" in tests/e2e/prototype.spec.ts |
-| 2 | Leaving a task while "Running tests…" shows does not cancel it: about 1 second later the report replaces the screen you moved to. | Submit a solution, click History right away. | Open |
+| 2 | Leaving a task while "Running tests…" shows does not cancel it: about 1 second later the report replaces the screen you moved to. | Submit a solution, click History right away. | Fixed in branch `fix/leave-while-running` (PR labelled `agent-found`). Test: "leaving a task while its tests run keeps you on the screen you chose" in tests/e2e/prototype.spec.ts |
