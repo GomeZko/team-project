@@ -27,14 +27,24 @@
 
 ## User stories (Given / When / Then)
 
+Core stories for v1 (G5, G6): **S2, S3, S4**, plus S1 sign-in.
+
 1. Given a new visitor, when they open the app, then they see a sign-up/sign-in screen.
+   - **Status: done** · PR: [#30](https://github.com/GomeZko/team-project/pull/30) (Supabase sign-up and sign-in), [#31](https://github.com/GomeZko/team-project/pull/31) (start page opens sign-in) · Tests: tests/e2e/auth.spec.ts, tests/e2e/smoke.spec.ts
 2. Given a signed-in user, when they open the dashboard, then they see the available task categories.
+   - **Status: done** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#21](https://github.com/GomeZko/team-project/pull/21) · The dashboard opens the categories with "Start a task" or "Tasks" in the top bar · Test: tests/e2e/prototype.spec.ts
 3. Given a user on the dashboard, when they select a category (e.g. "SQL"), then they see that task's description and starter files.
+   - **Status: done** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#26](https://github.com/GomeZko/team-project/pull/26), [#29](https://github.com/GomeZko/team-project/pull/29) · The task shows description, examples, what is checked and starter code · Test: tests/e2e/prototype.spec.ts
 4. Given a user viewing a task, when they submit a solution, then the system runs the hidden test suite and shows pass/fail results.
+   - **Status: done in the prototype** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#29](https://github.com/GomeZko/team-project/pull/29) · Pass/fail per check is shown. The prototype checks look for key parts of the code and do not run it yet; a real test runner is planned · Tests: tests/e2e/prototype.spec.ts, src/prototype/data.test.ts
 5. Given the automated tests have finished, when results are ready, then the AI evaluation step runs automatically.
+   - **Status: todo** · The report shows a placeholder AI review
 6. Given the AI evaluation is complete, when the user opens their report, then they see test results, AI feedback, and an overall skill score.
+   - **Status: done in the prototype, without real AI** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#29](https://github.com/GomeZko/team-project/pull/29) · Test: tests/e2e/prototype.spec.ts
 7. Given a completed report, when the user clicks "Share", then they get a shareable link or PDF to send to an employer.
+   - **Status: done in the prototype, sample link** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#29](https://github.com/GomeZko/team-project/pull/29) (badge) · Test: tests/e2e/prototype.spec.ts
 8. Given a signed-in user with past attempts, when they open "History", then they see a list of previous tasks and scores.
+   - **Status: done in the prototype, attempts stored in the browser** · PR: [#22](https://github.com/GomeZko/team-project/pull/22), [#30](https://github.com/GomeZko/team-project/pull/30) (attempts per account) · Tests: tests/e2e/prototype.spec.ts, tests/e2e/auth.spec.ts
 
 ## Events (past tense, chronological order, with triggering command)
 
