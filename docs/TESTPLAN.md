@@ -27,6 +27,26 @@ Evidence for G6:
 ## What the agent may not skip
 A story is done only when its end-to-end test is green in CI.
 
+## Database access rules (non-functional requirement 3)
+The tables are in `supabase/migrations/20261027_tasks_attempts.sql`. Two checks:
+
+- **In CI:** `src/lib/migrations.test.ts` fails if a table has no Row Level Security, if visitors without an account get table rights, or if people can set the view count themselves.
+- **By hand, on a throwaway local Postgres:** `supabase/tests/supabase_stub.sql` stands in for Supabase, then the migration, then `supabase/tests/rls_check.sql` with fictional users (two job-seekers, one author, one visitor without an account).
+
+Last run: 27.10.2026, Postgres 17, all 13 steps as expected:
+
+| What we tried | Result |
+|---|---|
+| A job-seeker reads all attempts | sees only their own; the other account sees 0 |
+| Save an attempt in someone else's name, or with a view count | refused |
+| Share or change someone else's attempt or task | 0 rows changed |
+| A job-seeker publishes a task | refused; an author can |
+| A visitor without an account reads the tables | refused |
+| A visitor opens a report link before and after sharing | 0 rows before; the report after, and the view count goes up |
+| An author's numbers for their task | attempts, people and average score, no names |
+
+Still to do after the migration runs on the real project: the same two-account check in the live app (sign in as two test accounts on two browsers).
+
 ## Agent-driven bug hunt (session 8)
 Agent: Claude Code with Playwright MCP (`.mcp.json`), 26.10.2026, against `npm run dev` with a fake Supabase in the browser (like tests/e2e/supabaseMock.ts).
 
