@@ -9,6 +9,7 @@ test('the SQL editor suggests the task table and its columns', async ({ page }) 
   await page.getByRole('button', { name: /SQL/ }).click();
   await page.getByRole('button', { name: /Top 3 customers/ }).click();
 
+  await page.getByRole('button', { name: 'Start the task' }).click();
   const box = page.getByLabel('Your solution');
   await expect(page.locator('.cm-lineNumbers')).toBeVisible();
   await box.fill('');

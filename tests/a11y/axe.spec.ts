@@ -30,8 +30,11 @@ test('no serious accessibility problems on the job-seeker screens', async ({ pag
   await page.getByRole('button', { name: /SQL/ }).click();
   await expectNoSeriousProblems(page); // task list
   await page.getByRole('button', { name: /Top 3 customers/ }).click();
-  await expectNoSeriousProblems(page); // task
+  await expectNoSeriousProblems(page); // task before Start
 
+  await page.getByRole('button', { name: 'Start the task' }).click();
+  await expect(page.getByLabel('Your solution')).toBeVisible();
+  await expectNoSeriousProblems(page); // task after Start: timer and code editor
   await page.getByLabel('Your solution').fill('SELECT customer_id FROM orders GROUP BY customer_id');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: /Automated tests/ })).toBeVisible();

@@ -120,6 +120,7 @@ test('each account sees only its own attempts', async ({ page }) => {
   await page.getByRole('button', { name: 'Start a task' }).click();
   await page.getByRole('button', { name: /SQL/ }).click();
   await page.getByRole('button', { name: /Top 3 customers/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill('SELECT 1 GROUP BY x ORDER BY y DESC LIMIT 3');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Your skill report' })).toBeVisible();
