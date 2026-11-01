@@ -27,6 +27,10 @@ Evidence for G6:
 ## What the agent may not skip
 A story is done only when its end-to-end test is green in CI.
 
+## Accessibility (non-functional requirement 2)
+- Keyboard only: `tests/e2e/keyboard.spec.ts` picks a task, submits a solution and opens the report with Tab, typing and Enter. Runs in CI.
+- axe on every screen: `tests/a11y/axe.spec.ts`, run with `npm run a11y`. Results are in docs/VALIDATION.md.
+
 ## Database access rules (non-functional requirement 3)
 The tables are in `supabase/migrations/20261027_tasks_attempts.sql`. Two checks:
 
