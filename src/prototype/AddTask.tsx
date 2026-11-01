@@ -45,16 +45,19 @@ export default function AddTask({ onAdd }: { onAdd: (categoryId: string, task: T
           ))}
         </select>
         <label htmlFor="title">Title</label>
-        <input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="For example: Top 3 customers by order total" />
         <label htmlFor="minutes">Time in minutes</label>
         <input id="minutes" type="number" min={5} max={60} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
         <label htmlFor="description">Description</label>
-        <textarea id="description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
+        <p id="description-hint" className="hint">What should the solution do? Name the tables, inputs or function the candidate works with.</p>
+        <textarea id="description" rows={4} value={description} aria-describedby="description-hint" onChange={(e) => setDescription(e.target.value)} />
         <label htmlFor="starter">Starter code (optional)</label>
-        <textarea id="starter" rows={4} value={starter} onChange={(e) => setStarter(e.target.value)} />
+        <p id="starter-hint" className="hint">Code the candidate starts from, for example an empty function. Leave it empty to start from a blank editor.</p>
+        <textarea id="starter" rows={4} value={starter} aria-describedby="starter-hint" onChange={(e) => setStarter(e.target.value)} />
         <label htmlFor="checks">Checks</label>
         <p id="checks-hint" className="hint">
-          One check per line. Write what the check is called, then a | sign, then a word or code the solution must contain.
+          One check per line: one thing the solution must contain. Before the | sign, write the name the candidate sees
+          in the report. After it, write the word or code we look for; capital letters and spaces do not matter.
           Example: <code>Groups by customer | group by</code>
         </p>
         <textarea id="checks" rows={4} value={checks} aria-describedby="checks-hint" onChange={(e) => setChecks(e.target.value)} placeholder="Groups by customer | group by" />
