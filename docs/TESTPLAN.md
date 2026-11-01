@@ -49,7 +49,16 @@ Last run: 27.10.2026, Postgres 17, all 13 steps as expected:
 | A visitor opens a report link before and after sharing | 0 rows before; the report after, and the view count goes up |
 | An author's numbers for their task | attempts, people and average score, no names |
 
-Still to do after the migration runs on the real project: the same two-account check in the live app (sign in as two test accounts on two browsers).
+**On the live project, 1.11.2026:** the migration was run in the Supabase SQL Editor. Checked from outside with the public key and no account (the way a visitor reaches the database):
+
+| What a visitor without an account tried | Result |
+|---|---|
+| Read `attempts` or `tasks` | refused: "permission denied" |
+| Save an attempt or add a task | refused: "permission denied" |
+| Open a report link that does not exist (`open_shared_report`) | empty answer, no rows |
+| Read an author's numbers (`my_task_stats`) | refused: "permission denied" |
+
+Still to do: the two-account check in the live app (two test accounts on two browsers, one must not see the other's attempts). It needs the app to save attempts in the database first, which is the branch `feat/db-attempts-report-link`.
 
 ## Agent-driven bug hunt (session 8)
 Agent: Claude Code with Playwright MCP (`.mcp.json`), 26.10.2026, against `npm run dev` with a fake Supabase in the browser (like tests/e2e/supabaseMock.ts).
