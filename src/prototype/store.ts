@@ -5,7 +5,16 @@ import type { CheckResult, Task } from './data'
 
 export type { Role } from '../lib/auth'
 export type User = AppUser
-export type Attempt = { id: string; taskId: string; taskTitle: string; results: CheckResult[]; score: number; date: string }
+// time: seconds spent on the task and its limit in minutes (S9). Older attempts have none.
+export type Attempt = {
+  id: string
+  taskId: string
+  taskTitle: string
+  results: CheckResult[]
+  score: number
+  date: string
+  time?: { seconds: number; limit: number }
+}
 
 // One list of attempts per account, so two people on the same laptop do not see each other's reports.
 const attemptsKey = (userId: string) => `jobbridge-attempts-${userId}`
@@ -35,10 +44,11 @@ export function addAttempt(
   taskId: string,
   taskTitle: string,
   results: CheckResult[],
+  time?: Attempt['time'],
 ): Attempt[] {
   const passed = results.filter((r) => r.passed).length
   const score = Math.round((passed / results.length) * 100)
-  const attempt: Attempt = { id: `${Date.now()}`, taskId, taskTitle, results, score, date: new Date().toISOString() }
+  const attempt: Attempt = { id: `${Date.now()}`, taskId, taskTitle, results, score, date: new Date().toISOString(), time }
   const next = [attempt, ...attempts]
   write(attemptsKey(userId), next)
   return next

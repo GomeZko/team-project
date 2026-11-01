@@ -62,13 +62,14 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 
 ### 3. Task
 - Purpose: read the task and write a solution.
-- First thing seen: task title, task description, an "Examples" list (input → expected result), a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
+- First thing seen: task title, a timer ("Time left: 15:00 of 15 min"), task description, an "Examples" list (input → expected result), a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
 - Primary action: "Submit solution".
 - Secondary actions: "← All categories".
 - Empty state: the solution box starts with starter code, not empty.
 - Loading state: the button changes to "Running tests…" and cannot be pressed again.
 - Error state: submitting an empty box or only the starter code shows "Write your solution first. The starter code alone does not count." The person stays on the screen and keeps what they wrote.
 - Keyboard: in the code box, Tab adds 4 spaces. Esc, then Tab, leaves the box.
+- Time up: the timer turns amber and says "Time is up: 02:05 over. You can still submit; the report shows your time." Nothing is taken away; the report shows "Time: 17 min 5 s of 15 min · over the limit".
 - Copy: "What we check" · "Your solution" · "Replace the comment in the starter code with your code. Tab adds spaces; press Esc, then Tab, to leave the box." · "Submit solution" · "Running tests…".
 
 ### 4. Skill report

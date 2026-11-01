@@ -46,6 +46,10 @@ Core stories for v1 (G5, G6): **S2, S3, S4**, plus S1 sign-in.
 8. Given a signed-in user with past attempts, when they open "History", then they see a list of previous tasks and scores.
    - **Status: done in the prototype, attempts stored in the browser** · PR: [#22](https://github.com/GomeZko/team-project/pull/22), [#30](https://github.com/GomeZko/team-project/pull/30) (attempts per account) · Tests: tests/e2e/prototype.spec.ts, tests/e2e/auth.spec.ts
 
+### Added for v2 (2 Nov 2026)
+9. Given a user working on a task, when time passes, then they see how much time is left; when the time is up they can still submit, and the report shows the time taken next to the limit.
+   - **Status: in review** · Test: tests/e2e/timer.spec.ts, src/prototype/time.test.ts · The timer is soft on purpose, see DECISIONS.md 2026-11-01.
+
 ## Events (past tense, chronological order, with triggering command)
 
 1. **UserRegistered** — triggered by `SignUp`
