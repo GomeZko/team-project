@@ -1,14 +1,25 @@
-// Prototype storage. Accounts are in Supabase (see SignIn.tsx), but attempts and tasks
-// still stay in this browser (localStorage) until a story saves them in the database.
+// Storage. Accounts and attempts are in Supabase (see docs/DECISIONS.md 2026-10-27).
+// Tasks added by authors still stay in this browser (localStorage) until a story saves them in the database.
+// The attempts functions run only after sign-in; without Supabase they fail and the screen shows an error.
 import type { AppUser } from '../lib/auth'
+import { supabase } from '../lib/supabase'
 import type { CheckResult, Task } from './data'
 
 export type { Role } from '../lib/auth'
 export type User = AppUser
 export type Attempt = { id: string; taskId: string; taskTitle: string; results: CheckResult[]; score: number; date: string }
 
-// One list of attempts per account, so two people on the same laptop do not see each other's reports.
-const attemptsKey = (userId: string) => `jobbridge-attempts-${userId}`
+type AttemptRow = { id: string; task_id: string; task_title: string; results: CheckResult[]; score: number; created_at: string }
+const ATTEMPT_COLUMNS = 'id, task_id, task_title, results, score, created_at'
+const toAttempt = (row: AttemptRow): Attempt => ({
+  id: row.id,
+  taskId: row.task_id,
+  taskTitle: row.task_title,
+  results: row.results,
+  score: row.score,
+  date: row.created_at,
+})
+
 const TASKS_KEY = 'jobbridge-demo-tasks'
 
 function read<T>(key: string, fallback: T): T {
@@ -28,20 +39,23 @@ function write(key: string, value: unknown) {
   } catch {}
 }
 
-export const loadAttempts = (userId: string) => read<Attempt[]>(attemptsKey(userId), [])
-export function addAttempt(
-  userId: string,
-  attempts: Attempt[],
-  taskId: string,
-  taskTitle: string,
-  results: CheckResult[],
-): Attempt[] {
+// Row Level Security returns only the signed-in person's rows, so there is no filter by user here.
+export async function loadAttempts(): Promise<Attempt[]> {
+  const { data, error } = await supabase!.from('attempts').select(ATTEMPT_COLUMNS).order('created_at', { ascending: false })
+  if (error) throw error
+  return (data as AttemptRow[]).map(toAttempt)
+}
+
+export async function addAttempt(taskId: string, taskTitle: string, results: CheckResult[]): Promise<Attempt> {
   const passed = results.filter((r) => r.passed).length
   const score = Math.round((passed / results.length) * 100)
-  const attempt: Attempt = { id: `${Date.now()}`, taskId, taskTitle, results, score, date: new Date().toISOString() }
-  const next = [attempt, ...attempts]
-  write(attemptsKey(userId), next)
-  return next
+  const { data, error } = await supabase!
+    .from('attempts')
+    .insert({ task_id: taskId, task_title: taskTitle, results, score })
+    .select(ATTEMPT_COLUMNS)
+    .single()
+  if (error) throw error
+  return toAttempt(data as AttemptRow)
 }
 
 // Tasks added by a task author. They show up for job-seekers in the same browser.

@@ -14,7 +14,7 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 - Empty state: not applicable.
 - Loading state: the button changes to "Signing in…" or "Creating account…" and cannot be pressed again.
 - Error states: "Enter a valid email and your password." · "Enter your name, a valid email and a password of at least 6 characters." · "Wrong email or password." · "An account with this email already exists. Sign in instead." · "Could not reach the server. Check your connection and try again."
-- Copy: "Prototype: use a made-up name. Tasks and reports stay in this browser for now."
+- Copy: "Prototype: use a made-up name. Your reports are saved with your account."
 
 ### 0a. Dashboard (job-seeker)
 - Purpose: see progress and start a task.
@@ -96,7 +96,7 @@ Main flow: from choosing a skill to a report the person can share.
 
 ## Prototype
 Link: https://team-project-azure-pi.vercel.app (the start page; old /?prototype links open the same page)
-Tool used: our own app (Vite + React) with sample data, built with Claude Code. No database, no real AI. Code: `src/prototype/`.
+Tool used: our own app (Vite + React) with sample tasks, built with Claude Code. Attempts are saved in Supabase; no real AI. Code: `src/prototype/`.
 
 ## Hallway tests
 Two participants, three tasks, think-aloud, 15 minutes each. Record: what they tried first, where they hesitated, what they said, whether they finished.

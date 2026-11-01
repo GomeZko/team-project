@@ -1,13 +1,26 @@
-import { expect, type Page, type Route } from '@playwright/test';
+import { expect, type Page, type Request, type Route } from '@playwright/test';
 
-// A fake Supabase sign-in server for browser tests.
+// A fake Supabase server for browser tests: sign-in and the attempts table.
 // The tests never talk to the real Supabase: CI needs no keys and no real accounts are created.
-// Accounts live in memory for one test only. They survive a page reload, like real ones.
+// Accounts and attempts live in memory for one test only. They survive a page reload, like real ones.
+// It copies the rules of the migration, but does not test them: supabase/tests/rls_check.sql does that.
 type Account = { id: string; email: string; password: string; name: string; role: string };
+type AttemptRow = {
+  id: string;
+  user_id: string;
+  task_id: string;
+  task_title: string;
+  results: unknown[];
+  score: number;
+  is_public: boolean;
+  views: number;
+  created_at: string;
+};
 
 export type Auth = {
   accounts: Map<string, Account>;
   addAccount: (account: Omit<Account, 'id'>) => void;
+  attempts: AttemptRow[];
 };
 
 const cors = {
@@ -15,6 +28,12 @@ const cors = {
   'access-control-allow-headers': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
+
+// The id of the signed-in person, read from the access token. A visitor without an account has none.
+function tokenUserId(request: Request): string | undefined {
+  const [, payload] = (request.headers().authorization ?? '').replace('Bearer ', '').split('.');
+  return payload ? JSON.parse(Buffer.from(payload, 'base64url').toString()).sub : undefined;
+}
 
 // Supabase reads the user id and expiry from the access token, so it is shaped like a real one.
 function token(account: Account) {
@@ -84,8 +103,7 @@ export async function mockSupabase(page: Page): Promise<Auth> {
     }
 
     if (url.pathname.endsWith('/user')) {
-      const [, payload] = (request.headers().authorization ?? '').replace('Bearer ', '').split('.');
-      const account = payload && byId(JSON.parse(Buffer.from(payload, 'base64url').toString()).sub);
+      const account = byId(tokenUserId(request) ?? '');
       return account ? reply(route, 200, user(account)) : fail(route, 401, 'bad_jwt', 'invalid JWT');
     }
 
@@ -94,7 +112,33 @@ export async function mockSupabase(page: Page): Promise<Auth> {
     return fail(route, 404, 'not_found', `Not mocked: ${url.pathname}`);
   });
 
-  return { accounts, addAccount };
+  // Newest first. Like Row Level Security: a person reaches only their own rows, a visitor none.
+  const attempts: AttemptRow[] = [];
+  await page.route('**/rest/v1/attempts**', async (route) => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    const userId = tokenUserId(request);
+    if (!userId) return fail(route, 401, '42501', 'permission denied for table attempts');
+
+    if (request.method() === 'GET') return reply(route, 200, attempts.filter((a) => a.user_id === userId));
+
+    if (request.method() === 'POST') {
+      const row: AttemptRow = {
+        ...request.postDataJSON(),
+        id: `00000000-0000-4000-8000-${String(attempts.length + 1).padStart(12, '0')}`,
+        user_id: userId,
+        is_public: false,
+        views: 0,
+        created_at: new Date().toISOString(),
+      };
+      attempts.unshift(row);
+      return reply(route, 201, row);
+    }
+
+    return fail(route, 404, 'not_found', `Not mocked: ${request.method()}`);
+  });
+
+  return { accounts, addAccount, attempts };
 }
 
 type NewAccount = { name: string; email: string; password?: string; author?: boolean };

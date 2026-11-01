@@ -10,7 +10,7 @@ import SignIn from './SignIn'
 import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
-// Accounts are real (Supabase). Tasks and reports are sample data in this browser, and there is no real AI yet.
+// Accounts and attempts are real (Supabase). Tasks are sample data in this browser, and there is no real AI yet.
 type Screen =
   | { name: 'dashboard' }
   | { name: 'categories' }
@@ -25,6 +25,7 @@ export default function Prototype() {
   const [user, setUser] = useState<User | null>(null)
   const [checking, setChecking] = useState(Boolean(supabase))
   const [attempts, setAttempts] = useState<Attempt[]>([])
+  const [attemptsStatus, setAttemptsStatus] = useState<'loading' | 'ready' | 'failed'>('loading')
   const [customTasks, setCustomTasks] = useState(loadCustomTasks)
   const [screen, setScreen] = useState<Screen>({ name: 'dashboard' })
   const shownUserId = useRef<string | null>(null)
@@ -39,13 +40,34 @@ export default function Prototype() {
       if ((next?.id ?? null) !== shownUserId.current) {
         shownUserId.current = next?.id ?? null
         setUser(next)
-        setAttempts(next ? loadAttempts(next.id) : [])
+        setAttempts([])
+        setAttemptsStatus('loading')
         setScreen({ name: 'dashboard' })
       }
       setChecking(false)
     })
     return () => data.subscription.unsubscribe()
   }, [])
+
+  // Not inside onAuthStateChange: Supabase can hang if that callback waits for another Supabase call.
+  const userId = user?.id
+  useEffect(() => {
+    if (!userId) return
+    let current = true
+    loadAttempts().then(
+      (list) => {
+        if (!current) return
+        setAttempts(list)
+        setAttemptsStatus('ready')
+      },
+      () => {
+        if (current) setAttemptsStatus('failed')
+      },
+    )
+    return () => {
+      current = false
+    }
+  }, [userId])
 
   if (checking) return <main><p className="hint">Loading…</p></main>
   if (!user) return <SignIn />
@@ -54,13 +76,15 @@ export default function Prototype() {
     await supabase?.auth.signOut()
   }
 
-  function finish(task: Task, results: CheckResult[]) {
-    const next = addAttempt(user!.id, attempts, task.id, task.title, results)
-    setAttempts(next)
-    setScreen({ name: 'report', attempt: next[0], task })
+  // If the person moved on while the attempt was saving, it is still saved but they stay where they are.
+  async function finish(task: Task, results: CheckResult[]) {
+    const attempt = await addAttempt(task.id, task.title, results)
+    setAttempts((list) => [attempt, ...list])
+    setScreen((current) => (current.name === 'task' && current.task === task ? { name: 'report', attempt, task } : current))
   }
 
   const go = (name: 'dashboard' | 'categories' | 'history' | 'add-task') => setScreen({ name } as Screen)
+  const showsAttempts = screen.name === 'history' || (screen.name === 'dashboard' && user.role === 'seeker')
 
   return (
     <>
@@ -96,7 +120,11 @@ export default function Prototype() {
             }}
           />
         )}
-        {screen.name === 'dashboard' && user.role === 'seeker' && (
+        {showsAttempts && attemptsStatus === 'loading' && <p className="hint">Loading…</p>}
+        {showsAttempts && attemptsStatus === 'failed' && (
+          <p className="error" role="alert">We could not load your attempts. Reload the page to try again.</p>
+        )}
+        {showsAttempts && attemptsStatus === 'ready' && screen.name === 'dashboard' && (
           <Dashboard
             user={user}
             attempts={attempts}
@@ -104,7 +132,7 @@ export default function Prototype() {
             onOpen={(attempt) => setScreen({ name: 'report', attempt })}
           />
         )}
-        {screen.name === 'history' && (
+        {showsAttempts && attemptsStatus === 'ready' && screen.name === 'history' && (
           <History attempts={attempts} onOpen={(attempt) => setScreen({ name: 'report', attempt })} />
         )}
         {screen.name === 'categories' && (
@@ -118,7 +146,7 @@ export default function Prototype() {
           />
         )}
         {screen.name === 'task' && (
-          <TaskScreen task={screen.task} onBack={() => go('categories')} onDone={(results) => finish(screen.task, results)} />
+          <TaskScreen task={screen.task} onBack={() => go('categories')} onSave={(results) => finish(screen.task, results)} />
         )}
         {screen.name === 'report' && (
           <Report
@@ -174,7 +202,7 @@ function Tasks({ category, onBack, onPick }: { category: Category; onBack: () =>
   )
 }
 
-function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; onDone: (r: CheckResult[]) => void }) {
+function TaskScreen({ task, onBack, onSave }: { task: Task; onBack: () => void; onSave: (r: CheckResult[]) => Promise<void> }) {
   const [solution, setSolution] = useState(task.starter)
   const [error, setError] = useState('')
   const [running, setRunning] = useState(false)
@@ -190,6 +218,16 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
     const next = solution.slice(0, start) + '    ' + solution.slice(end)
     setSolution(next)
     requestAnimationFrame(() => box.setSelectionRange(start + 4, start + 4))
+  }
+
+  // If saving fails, the person stays here and keeps what they wrote.
+  async function onDone(results: CheckResult[]) {
+    try {
+      await onSave(results)
+    } catch {
+      setRunning(false)
+      setError('We could not save your attempt. Check your connection and submit again.')
+    }
   }
 
   function submit() {
