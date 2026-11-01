@@ -86,7 +86,7 @@ export default function SignIn() {
           {signingUp ? 'I already have an account' : 'Create an account'}
         </button>
       </p>
-      <p className="hint">Prototype: use a made-up name. Tasks and reports stay in this browser for now.</p>
+      <p className="hint">Prototype: use a made-up name. Your reports are saved with your account.</p>
     </main>
   )
 }
