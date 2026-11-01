@@ -77,9 +77,15 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 - Primary action: "Share report".
 - Secondary actions: "Try again" (back to the task), "Back to dashboard".
 - Empty state: not applicable, a report always has results.
-- Loading state: not applicable, shown after tests finish.
-- Error state: in v1 a failing test is a result, not an error: it shows ❌ next to the test name.
-- Copy: "Your skill report" · "Score: N / 100" · "Automated tests: X of Y passed" · "AI review" · "Share report" · "Try again" · "Back to dashboard" · after sharing: "Link ready to send: …".
+- Loading state: not applicable, shown after the attempt is saved.
+- Error state: in v1 a failing test is a result, not an error: it shows ❌ next to the test name. If sharing fails: "We could not share this report. Check your connection and try again."
+- Copy: "Your skill report" · "Score: N / 100" · "Automated tests: X of Y passed" · "AI review" · "Share report" · "Try again" · "Back to dashboard" · after sharing: "Link ready to send: …" and "Anyone with this link can see this report, without an account. It does not show your name or email."
+
+### 5. Shared report (employer, no account)
+- Purpose: an employer opens the link a job-seeker sent: `/?report=<id>`.
+- First thing seen: "Skill report", the task title, "Score: N / 100" and the pass/fail per check. No name or email.
+- Loading state: "Loading…".
+- Error state: "We could not open this report. The link may be wrong, or the report is not shared."
 
 ## Flows
 

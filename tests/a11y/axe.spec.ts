@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 // Session 9: the accessibility check. Run it with: npm run a11y
 // It opens the start page (sign-in) and lists serious and critical problems.
 // Add a line for each page your users visit, for example '/booking'.
-const pages = ['/'];
+const pages = ['/', '/?report=not-shared'];
 
 for (const path of pages) {
   test(`no serious accessibility problems on ${path}`, async ({ page }) => {

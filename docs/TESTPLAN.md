@@ -10,7 +10,7 @@ Core stories for G6: S2, S3, S4 (plus S1). All tests run on every pull request a
 | S3 open a task | tests/e2e/prototype.spec.ts: "the task shows its checks, and Tab adds spaces in the code box", "a failed check shows a tip, and sharing shows a badge" (examples) | none: no separate logic | passed in CI |
 | S4 submit a solution, see pass/fail | tests/e2e/prototype.spec.ts: "a job-seeker submits a SQL solution…", "Java tasks pass with or without spaces around operators", "Python tasks give a score", "error and empty states…" | src/prototype/data.test.ts (runChecks: demo solutions pass, weak solutions fail) | passed in CI |
 | S6 view the report | tests/e2e/prototype.spec.ts: "a failed check shows a tip, and sharing shows a badge" | src/prototype/data.test.ts | passed in CI (prototype, no real AI) |
-| S7 share the report | tests/e2e/prototype.spec.ts: "a failed check shows a tip, and sharing shows a badge" | none | passed in CI (prototype, sample link) |
+| S7 share the report | tests/e2e/prototype.spec.ts: "a failed check shows a tip, and sharing shows a badge"; tests/e2e/attempts.spec.ts: "a visitor without an account opens a shared report…", "if sharing fails…", "the report link does not make a phone screen scroll sideways" | none | real link; green in CI once merged |
 | S8 history | tests/e2e/prototype.spec.ts: "history lists every attempt and opens its report"; tests/e2e/auth.spec.ts: "each account sees only its own attempts"; tests/e2e/attempts.spec.ts: "an attempt is saved in the database…", "if saving fails…", "if attempts cannot load…" | none | saved in the database; green in CI once merged |
 | Task author adds a task | tests/e2e/prototype.spec.ts: "a task author publishes a task and a job-seeker can solve it" | none | passed in CI |
 | S5 AI evaluation | none yet | none | todo |
@@ -45,7 +45,9 @@ Last run: 27.10.2026, Postgres 17, all 13 steps as expected:
 | A visitor opens a report link before and after sharing | 0 rows before; the report after, and the view count goes up |
 | An author's numbers for their task | attempts, people and average score, no names |
 
-Still to do after the migration runs on the real project: the same two-account check in the live app (sign in as two test accounts on two browsers).
+The migration ran on the real project on 1.11.2026, in the Supabase SQL Editor, with no problems.
+
+Still to do: the same two-account check in the live app (sign in as two test accounts on two browsers).
 
 ## Agent-driven bug hunt (session 8)
 Agent: Claude Code with Playwright MCP (`.mcp.json`), 26.10.2026, against `npm run dev` with a fake Supabase in the browser (like tests/e2e/supabaseMock.ts).

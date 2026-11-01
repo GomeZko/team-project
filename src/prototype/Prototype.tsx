@@ -6,8 +6,9 @@ import AddTask from './AddTask'
 import MyTasks from './MyTasks'
 import Dashboard from './Dashboard'
 import History from './History'
+import { ResultList } from './SharedReport'
 import SignIn from './SignIn'
-import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, type Attempt, type User } from './store'
+import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, shareAttempt, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
 // Accounts and attempts are real (Supabase). Tasks are sample data in this browser, and there is no real AI yet.
@@ -281,8 +282,19 @@ function TaskScreen({ task, onBack, onSave }: { task: Task; onBack: () => void; 
 }
 
 function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () => void; onHome: () => void }) {
-  const [shared, setShared] = useState(false)
+  const [share, setShare] = useState<'idle' | 'sharing' | 'shared' | 'failed'>('idle')
   const passed = attempt.results.filter((r) => r.passed).length
+  const link = `${window.location.origin}/?report=${attempt.id}`
+
+  async function shareReport() {
+    setShare('sharing')
+    try {
+      await shareAttempt(attempt.id)
+      setShare('shared')
+    } catch {
+      setShare('failed')
+    }
+  }
 
   return (
     <>
@@ -290,25 +302,20 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
       <p className="lead">{attempt.taskTitle} · {new Date(attempt.date).toLocaleDateString('en-GB')}</p>
       <h2>Score: {attempt.score} / 100</h2>
       <h3>Automated tests: {passed} of {attempt.results.length} passed</h3>
-      <ul className="results">
-        {attempt.results.map((r) => (
-          <li key={r.name}>
-            {r.passed ? '✅' : '❌'} {r.name}
-            {r.tip && <span className="tip"> Tip: {r.tip}</span>}
-          </li>
-        ))}
-      </ul>
+      <ResultList results={attempt.results} />
       <h3>AI review</h3>
       <p>Sample text in the prototype. The real report explains code quality, structure and what to improve.</p>
       <p className="hint">Prototype: the checks look for key parts of your code, they do not run it yet. The real version runs your code against tests.</p>
       <div className="actions">
-        <button className="primary" onClick={() => setShared(true)}>Share report</button>
+        <button className="primary" onClick={shareReport} disabled={share === 'sharing'}>Share report</button>
         {onRetry && <button onClick={onRetry}>Try again</button>}
         <button onClick={onHome}>Back to dashboard</button>
       </div>
-      {shared && (
+      {share === 'failed' && <p className="error" role="alert">We could not share this report. Check your connection and try again.</p>}
+      {share === 'shared' && (
         <div role="status">
-          <p>Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
+          <p>Link ready to send: <a className="share-link" href={link}>{link}</a></p>
+          <p className="hint">Anyone with this link can see this report, without an account. It does not show your name or email.</p>
           <p className="share-badge" aria-label={`Badge: JobBridge verified, ${attempt.taskTitle}, ${attempt.score} / 100`}>
             <strong>JobBridge</strong> {attempt.taskTitle} · {attempt.score}/100
           </p>

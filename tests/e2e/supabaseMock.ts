@@ -26,7 +26,7 @@ export type Auth = {
 const cors = {
   'access-control-allow-origin': '*',
   'access-control-allow-headers': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
 };
 
 // The id of the signed-in person, read from the access token. A visitor without an account has none.
@@ -135,7 +135,23 @@ export async function mockSupabase(page: Page): Promise<Auth> {
       return reply(route, 201, row);
     }
 
+    if (request.method() === 'PATCH') {
+      const id = new URL(request.url()).searchParams.get('id')?.replace('eq.', '');
+      const row = attempts.find((a) => a.id === id && a.user_id === userId);
+      if (row) row.is_public = request.postDataJSON().is_public;
+      return route.fulfill({ status: 204, headers: cors });
+    }
+
     return fail(route, 404, 'not_found', `Not mocked: ${request.method()}`);
+  });
+
+  await page.route('**/rest/v1/rpc/open_shared_report', async (route) => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    const row = attempts.find((a) => a.id === request.postDataJSON().report_id && a.is_public);
+    if (!row) return reply(route, 200, []);
+    row.views += 1;
+    return reply(route, 200, [{ task_title: row.task_title, results: row.results, score: row.score, created_at: row.created_at }]);
   });
 
   return { accounts, addAccount, attempts };
