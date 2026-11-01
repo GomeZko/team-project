@@ -7,6 +7,7 @@ import MyTasks from './MyTasks'
 import Dashboard from './Dashboard'
 import History from './History'
 import SignIn from './SignIn'
+import { clock, duration } from './time'
 import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
@@ -54,8 +55,8 @@ export default function Prototype() {
     await supabase?.auth.signOut()
   }
 
-  function finish(task: Task, results: CheckResult[]) {
-    const next = addAttempt(user!.id, attempts, task.id, task.title, results)
+  function finish(task: Task, results: CheckResult[], seconds: number) {
+    const next = addAttempt(user!.id, attempts, task.id, task.title, results, { seconds, limit: task.minutes })
     setAttempts(next)
     setScreen({ name: 'report', attempt: next[0], task })
   }
@@ -118,7 +119,7 @@ export default function Prototype() {
           />
         )}
         {screen.name === 'task' && (
-          <TaskScreen task={screen.task} onBack={() => go('categories')} onDone={(results) => finish(screen.task, results)} />
+          <TaskScreen task={screen.task} onBack={() => go('categories')} onDone={(results, seconds) => finish(screen.task, results, seconds)} />
         )}
         {screen.name === 'report' && (
           <Report
@@ -174,10 +175,18 @@ function Tasks({ category, onBack, onPick }: { category: Category; onBack: () =>
   )
 }
 
-function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; onDone: (r: CheckResult[]) => void }) {
+function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; onDone: (r: CheckResult[], seconds: number) => void }) {
   const [solution, setSolution] = useState(task.starter)
   const [error, setError] = useState('')
   const [running, setRunning] = useState(false)
+  // Soft timer (S9): it counts down from the task's minutes; when time is up the person can still submit.
+  const startedAt = useRef(Date.now())
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(id)
+  }, [])
+  const left = task.minutes * 60 - Math.floor((now - startedAt.current) / 1000)
   // Tab adds spaces in the code box (test A). Esc, then Tab, leaves the box, so keyboard users are not trapped.
   const [leaving, setLeaving] = useState(false)
 
@@ -199,13 +208,19 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
     }
     setError('')
     setRunning(true)
-    setTimeout(() => onDone(runChecks(task, solution)), 800)
+    const seconds = Math.round((Date.now() - startedAt.current) / 1000)
+    setTimeout(() => onDone(runChecks(task, solution), seconds), 800)
   }
 
   return (
     <>
       <button className="link" onClick={onBack}>← All categories</button>
       <h1>{task.title}</h1>
+      <p role="timer" className={left < 0 ? 'timer over' : 'timer'}>
+        {left >= 0
+          ? `Time left: ${clock(left)} of ${task.minutes} min`
+          : `Time is up: ${clock(-left)} over. You can still submit; the report shows your time.`}
+      </p>
       <p>{task.description}</p>
       {task.examples.length > 0 && (
         <>
@@ -250,6 +265,12 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
     <>
       <h1>Your skill report</h1>
       <p className="lead">{attempt.taskTitle} · {new Date(attempt.date).toLocaleDateString('en-GB')}</p>
+      {attempt.time && (
+        <p className="timer">
+          Time: {duration(attempt.time.seconds)} of {attempt.time.limit} min
+          {attempt.time.seconds > attempt.time.limit * 60 && ' · over the limit'}
+        </p>
+      )}
       <h2>Score: {attempt.score} / 100</h2>
       <h3>Automated tests: {passed} of {attempt.results.length} passed</h3>
       <ul className="results">
