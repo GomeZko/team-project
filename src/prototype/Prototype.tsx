@@ -89,7 +89,7 @@ export default function Prototype() {
         <button onClick={signOut}>Sign out</button>
       </header>
       <main>
-        <p className="badge">Prototype · sample data</p>
+        <p className="badge">Version 1</p>
         {screen.name === 'my-tasks' || (screen.name === 'dashboard' && user.role === 'author') ? (
           <MyTasks
             user={user}
@@ -303,8 +303,8 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
         ))}
       </ul>
       <h3>AI review</h3>
-      <p>Sample text in the prototype. The real report explains code quality, structure and what to improve.</p>
-      <p className="hint">Prototype: the checks look for key parts of your code, they do not run it yet. The real version runs your code against tests.</p>
+      <p>Coming next: an AI review that comments on how you solved the task, not only on the result.</p>
+      <p className="hint">Version 1: the checks look for key parts of your code; they do not run it yet. A later version runs your code against tests.</p>
       <div className="actions">
         <button className="primary" onClick={() => setShared(true)}>Share report</button>
         {onRetry && <button onClick={onRetry}>Try again</button>}
@@ -312,7 +312,7 @@ function Report({ attempt, onRetry, onHome }: { attempt: Attempt; onRetry?: () =
       </div>
       {shared && (
         <div role="status">
-          <p>Link ready to send: jobbridge.example/report/{attempt.id} (sample link, not real)</p>
+          <p>Link ready to send: jobbridge.example/report/{attempt.id} (example link; real links come in the next version)</p>
           <p className="share-badge" aria-label={`Badge: JobBridge verified, ${attempt.taskTitle}, ${attempt.score} / 100`}>
             <strong>JobBridge</strong> {attempt.taskTitle} · {attempt.score}/100
           </p>

@@ -37,7 +37,7 @@ export default function SignIn() {
 
   return (
     <main className="signin">
-      <p className="badge">Prototype</p>
+      <p className="badge">Version 1</p>
       <h1>JobBridge</h1>
       <p className="lead">Prove one skill in 15 minutes and get a report you can attach to job applications.</p>
       <h2>{signingUp ? 'Create an account' : 'Sign in'}</h2>
@@ -86,7 +86,7 @@ export default function SignIn() {
           {signingUp ? 'I already have an account' : 'Create an account'}
         </button>
       </p>
-      <p className="hint">Prototype: use a made-up name. Tasks and reports stay in this browser for now.</p>
+      <p className="hint">Version 1: use a made-up name. Your reports are kept in this browser for now.</p>
     </main>
   )
 }
