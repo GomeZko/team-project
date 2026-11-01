@@ -49,6 +49,8 @@ Core stories for v1 (G5, G6): **S2, S3, S4**, plus S1 sign-in.
 ### Added for v2 (2 Nov 2026)
 9. Given a user working on a task, when time passes, then they see how much time is left; when the time is up they can still submit, and the report shows the time taken next to the limit.
    - **Status: in review** · Test: tests/e2e/timer.spec.ts, src/prototype/time.test.ts · The timer is soft on purpose, see DECISIONS.md 2026-11-01.
+10. Given a user writing a solution, when they type in the code box, then it works like an IDE: colours for the language, line numbers, matching brackets, and suggestions for the language's words and, in SQL, the task's tables and columns. It never suggests the solution.
+   - **Status: in review** · Test: tests/e2e/editor.spec.ts, tests/e2e/keyboard.spec.ts · Editor: CodeMirror, see DECISIONS.md 2026-11-01.
 
 ## Events (past tense, chronological order, with triggering command)
 

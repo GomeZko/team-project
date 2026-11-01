@@ -68,9 +68,10 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 - Empty state: the solution box starts with starter code, not empty.
 - Loading state: the button changes to "Running tests…" and cannot be pressed again.
 - Error state: submitting an empty box or only the starter code shows "Write your solution first. The starter code alone does not count." The person stays on the screen and keeps what they wrote.
-- Keyboard: in the code box, Tab adds 4 spaces. Esc, then Tab, leaves the box.
+- Code box: an editor like an IDE (CodeMirror) with colours for the task's language, line numbers and suggestions as you type; in SQL it suggests the task's tables and columns. While it loads, the screen says "Loading the editor…".
+- Keyboard: in the code box, Tab adds 4 spaces. Esc, then Tab, leaves the box; if suggestions are open, the first Esc closes them.
 - Time up: the timer turns amber and says "Time is up: 02:05 over. You can still submit; the report shows your time." Nothing is taken away; the report shows "Time: 17 min 5 s of 15 min · over the limit".
-- Copy: "What we check" · "Your solution" · "Replace the comment in the starter code with your code. Tab adds spaces; press Esc, then Tab, to leave the box." · "Submit solution" · "Running tests…".
+- Copy: "What we check" · "Your solution" · "Replace the comment in the starter code with your code. Suggestions appear as you type. Tab adds spaces; press Esc, then Tab, to leave the box (if suggestions are open, the first Esc closes them)." · "Submit solution" · "Running tests…".
 
 ### 4. Skill report
 - Purpose: see the result and share it with an employer.

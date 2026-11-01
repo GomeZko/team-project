@@ -108,7 +108,7 @@ test('the task shows its checks, and Tab adds spaces in the code box', async ({ 
   const box = page.getByLabel('Your solution');
   await box.fill('');
   await box.press('Tab');
-  await expect(box).toHaveValue('    ');
+  expect(await box.textContent()).toBe('    ');
   await expect(box).toBeFocused();
   await box.press('Escape');
   await box.press('Tab');

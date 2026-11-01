@@ -26,7 +26,8 @@ test('a job-seeker picks a task, submits a solution and reads the report by keyb
   await tabTo(page, box);
   await page.keyboard.press('ControlOrMeta+A');
   await page.keyboard.type('SELECT customer_id, SUM(total) AS spent FROM orders GROUP BY customer_id ORDER BY spent DESC LIMIT 3');
-  // Tab inside the code box types spaces, so the person presses Escape first to leave it with Tab.
+  // Tab inside the code box types spaces. Esc closes the suggestions, a second Esc lets Tab leave the box.
+  await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   await tabTo(page, page.getByRole('button', { name: 'Submit solution' }));
   await page.keyboard.press('Enter');
