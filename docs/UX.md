@@ -62,8 +62,8 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 
 ### 3. Task
 - Purpose: read the task and write a solution.
-- First thing seen: task title, a timer ("Time left: 15:00 of 15 min"), task description, an "Examples" list (input → expected result), a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
-- Primary action: "Submit solution".
+- First thing seen: task title, the time limit ("Time limit: 15 min"), task description, an "Examples" list (input → expected result), a "What we check" list with the name of every check, a "Your solution" box with starter code and a hint under its label.
+- Primary action: "Start the task" (before), then "Submit solution". Before Start the person reads the task; there is no code box and the timer does not run. Start opens the code box, puts the cursor in it and starts the timer ("Time left: 15:00 of 15 min").
 - Secondary actions: "← All categories".
 - Empty state: the solution box starts with starter code, not empty.
 - Loading state: the button changes to "Running tests…" and cannot be pressed again.

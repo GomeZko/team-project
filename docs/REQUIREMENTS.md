@@ -47,8 +47,8 @@ Core stories for v1 (G5, G6): **S2, S3, S4**, plus S1 sign-in.
    - **Status: done in the prototype, attempts stored in the browser** · PR: [#22](https://github.com/GomeZko/team-project/pull/22), [#30](https://github.com/GomeZko/team-project/pull/30) (attempts per account) · Tests: tests/e2e/prototype.spec.ts, tests/e2e/auth.spec.ts
 
 ### Added for v2 (2 Nov 2026)
-9. Given a user working on a task, when time passes, then they see how much time is left; when the time is up they can still submit, and the report shows the time taken next to the limit.
-   - **Status: done** · PR: [#44](https://github.com/GomeZko/team-project/pull/44) · Test: tests/e2e/timer.spec.ts, src/prototype/time.test.ts · The timer is soft on purpose, see DECISIONS.md 2026-11-01.
+9. Given a user who opened a task, when they press "Start the task", then the timer starts and the code box opens; before that they can read the task without the clock running. When time passes, they see how much time is left; when the time is up they can still submit, and the report shows the time taken next to the limit.
+   - **Status: done** · PR: [#44](https://github.com/GomeZko/team-project/pull/44), "Start the task" in this PR · Test: tests/e2e/timer.spec.ts, src/prototype/time.test.ts · The timer is soft on purpose, see DECISIONS.md 2026-11-01.
 10. Given a user writing a solution, when they type in the code box, then it works like an IDE: colours for the language, line numbers, matching brackets, and suggestions for the language's words and, in SQL, the task's tables and columns. It never suggests the solution.
    - **Status: done** · PR: [#45](https://github.com/GomeZko/team-project/pull/45) · Test: tests/e2e/editor.spec.ts, tests/e2e/keyboard.spec.ts · Editor: CodeMirror, see DECISIONS.md 2026-11-01.
 11. Given a task author who published a task, when they copy its link and send it to a candidate, then the candidate opens the link, signs in or creates an account, and lands on that task with the timer and the editor.

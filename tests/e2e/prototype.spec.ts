@@ -17,6 +17,7 @@ test('a job-seeker submits a SQL solution and the report shows on the dashboard'
   await page.getByRole('button', { name: 'Start a task' }).click();
   await page.getByRole('button', { name: /SQL/ }).click();
   await page.getByRole('button', { name: /Top 3 customers/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill(
     'SELECT customer_id, SUM(total) AS spent FROM orders GROUP BY customer_id ORDER BY spent DESC LIMIT 3',
   );
@@ -31,6 +32,7 @@ test('error and empty states: starter code only, category without tasks', async 
   await page.getByRole('button', { name: 'Tasks' }).click();
   await page.getByRole('button', { name: /SQL/ }).click();
   await page.getByRole('button', { name: /Top 3 customers/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('alert')).toHaveText('Write your solution first. The starter code alone does not count.');
   await page.getByRole('button', { name: 'Tasks' }).click();
@@ -46,6 +48,7 @@ test('history lists every attempt and opens its report', async ({ page }) => {
     await page.getByRole('button', { name: 'Tasks' }).click();
     await page.getByRole('button', { name: /SQL/ }).click();
     await page.getByRole('button', { name: /Top 3 customers/ }).click();
+    await page.getByRole('button', { name: 'Start the task' }).click();
     await page.getByLabel('Your solution').fill(solution);
     await page.getByRole('button', { name: 'Submit solution' }).click();
     await expect(page.getByRole('heading', { name: 'Your skill report' })).toBeVisible();
@@ -73,6 +76,7 @@ test('a task author publishes a task and a job-seeker can solve it', async ({ pa
   await page.getByRole('button', { name: 'Start a task' }).click();
   await page.getByRole('button', { name: /SQL.*2 tasks/ }).click();
   await page.getByRole('button', { name: /Count active users/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill('SELECT COUNT(*) FROM users WHERE active');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Automated tests: 2 of 2 passed' })).toBeVisible();
@@ -83,6 +87,7 @@ test('Java tasks pass with or without spaces around operators', async ({ page })
   await page.getByRole('button', { name: 'Tasks' }).click();
   await page.getByRole('button', { name: /Java.*2 tasks/ }).click();
   await page.getByRole('button', { name: /Is the number even/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill('public static boolean isEven(int n) {\n  return n%2==0;\n}');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Automated tests: 3 of 3 passed' })).toBeVisible();
@@ -93,6 +98,7 @@ test('Python tasks give a score', async ({ page }) => {
   await page.getByRole('button', { name: 'Tasks' }).click();
   await page.getByRole('button', { name: /Python.*2 tasks/ }).click();
   await page.getByRole('button', { name: /Largest number in a list/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill('def largest(numbers):\n    return max(numbers)');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Score: 100 / 100' })).toBeVisible();
@@ -105,6 +111,7 @@ test('the task shows its checks, and Tab adds spaces in the code box', async ({ 
   await page.getByRole('button', { name: /Say hello/ }).click();
   await expect(page.getByRole('heading', { name: 'What we check' })).toBeVisible();
   await expect(page.getByRole('listitem').filter({ hasText: 'Uses the name' })).toBeVisible();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   const box = page.getByLabel('Your solution');
   await box.fill('');
   await box.press('Tab');
@@ -121,6 +128,7 @@ test('a failed check shows a tip, and sharing shows a badge', async ({ page }) =
   await page.getByRole('button', { name: /Python/ }).click();
   await page.getByRole('button', { name: /Say hello/ }).click();
   await expect(page.getByText('greet("Anna") → "Hello, Anna!"')).toBeVisible();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill('def greet(name):\n    return "Hello!"');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByText('Tip: Put the name into the text')).toBeVisible();
@@ -135,6 +143,7 @@ test('on a phone the page does not scroll sideways and Sign out is visible', asy
   await page.getByRole('button', { name: 'Start a task' }).click();
   await page.getByRole('button', { name: /SQL/ }).click();
   await page.getByRole('button', { name: /Top 3 customers/ }).click();
+  await page.getByRole('button', { name: 'Start the task' }).click();
   await page.getByLabel('Your solution').fill('SELECT 1 GROUP BY customer_id');
   await page.getByRole('button', { name: 'Submit solution' }).click();
   await expect(page.getByRole('heading', { name: 'Your skill report' })).toBeVisible();

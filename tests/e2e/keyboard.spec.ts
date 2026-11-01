@@ -22,8 +22,12 @@ test('a job-seeker picks a task, submits a solution and reads the report by keyb
   await tabTo(page, page.getByRole('button', { name: /Top 3 customers/ }));
   await page.keyboard.press('Enter');
 
+  await tabTo(page, page.getByRole('button', { name: 'Start the task' }));
+  await page.keyboard.press('Enter');
+
+  // After Start, the cursor is already in the code box.
   const box = page.getByLabel('Your solution');
-  await tabTo(page, box);
+  await expect(box).toBeFocused();
   await page.keyboard.press('ControlOrMeta+A');
   await page.keyboard.type('SELECT customer_id, SUM(total) AS spent FROM orders GROUP BY customer_id ORDER BY spent DESC LIMIT 3');
   // Tab inside the code box types spaces. Esc closes the suggestions, a second Esc lets Tab leave the box.

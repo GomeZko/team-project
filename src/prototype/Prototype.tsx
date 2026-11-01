@@ -190,14 +190,22 @@ function TaskScreen({ task, language, onBack, onDone }: TaskScreenProps) {
   const [solution, setSolution] = useState(task.starter)
   const [error, setError] = useState('')
   const [running, setRunning] = useState(false)
-  // Soft timer (S9): it counts down from the task's minutes; when time is up the person can still submit.
-  const startedAt = useRef(Date.now())
+  // Soft timer (S9): it starts when the person presses "Start the task", so they can read the task first.
+  // It counts down from the task's minutes; when time is up the person can still submit.
+  const [startedAt, setStartedAt] = useState<number | null>(null)
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
+    if (startedAt === null) return
     const id = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(id)
-  }, [])
-  const left = task.minutes * 60 - Math.floor((now - startedAt.current) / 1000)
+  }, [startedAt])
+  const left = task.minutes * 60 - Math.floor((now - (startedAt ?? now)) / 1000)
+
+  function start() {
+    const time = Date.now()
+    setStartedAt(time)
+    setNow(time)
+  }
 
   function submit() {
     if (solution.trim() === '' || solution.trim() === task.starter.trim()) {
@@ -206,7 +214,7 @@ function TaskScreen({ task, language, onBack, onDone }: TaskScreenProps) {
     }
     setError('')
     setRunning(true)
-    const seconds = Math.round((Date.now() - startedAt.current) / 1000)
+    const seconds = Math.round((Date.now() - startedAt!) / 1000)
     setTimeout(() => onDone(runChecks(task, solution), seconds), 800)
   }
 
@@ -214,11 +222,15 @@ function TaskScreen({ task, language, onBack, onDone }: TaskScreenProps) {
     <>
       <button className="link" onClick={onBack}>← All categories</button>
       <h1>{task.title}</h1>
-      <p role="timer" className={left < 0 ? 'timer over' : 'timer'}>
-        {left >= 0
-          ? `Time left: ${clock(left)} of ${task.minutes} min`
-          : `Time is up: ${clock(-left)} over. You can still submit; the report shows your time.`}
-      </p>
+      {startedAt === null ? (
+        <p className="timer">Time limit: {task.minutes} min</p>
+      ) : (
+        <p role="timer" className={left < 0 ? 'timer over' : 'timer'}>
+          {left >= 0
+            ? `Time left: ${clock(left)} of ${task.minutes} min`
+            : `Time is up: ${clock(-left)} over. You can still submit; the report shows your time.`}
+        </p>
+      )}
       <p>{task.description}</p>
       {task.examples.length > 0 && (
         <>
@@ -236,22 +248,32 @@ function TaskScreen({ task, language, onBack, onDone }: TaskScreenProps) {
           <li key={c.name}>{c.name}</li>
         ))}
       </ul>
-      <p id="solution-label" className="label">Your solution</p>
-      <p id="solution-hint" className="hint">Replace the comment in the starter code with your code. Suggestions appear as you type. Tab adds spaces; press Esc, then Tab, to leave the box (if suggestions are open, the first Esc closes them).</p>
-      <Suspense fallback={<p className="hint">Loading the editor…</p>}>
-        <CodeEditor
-          value={task.starter}
-          onChange={setSolution}
-          language={language}
-          tables={task.tables}
-          labelledBy="solution-label"
-          describedBy="solution-hint"
-        />
-      </Suspense>
-      {error && <p className="error" role="alert">{error}</p>}
-      <button className="primary" onClick={submit} disabled={running}>
-        {running ? 'Running tests…' : 'Submit solution'}
-      </button>
+      {startedAt === null ? (
+        <>
+          <p className="hint">Read the task first. The timer starts when you press the button, and the code box opens.</p>
+          <button className="primary" onClick={start}>Start the task</button>
+        </>
+      ) : (
+        <>
+          <p id="solution-label" className="label">Your solution</p>
+          <p id="solution-hint" className="hint">Replace the comment in the starter code with your code. Suggestions appear as you type. Tab adds spaces; press Esc, then Tab, to leave the box (if suggestions are open, the first Esc closes them).</p>
+          <Suspense fallback={<p className="hint">Loading the editor…</p>}>
+            <CodeEditor
+              value={task.starter}
+              onChange={setSolution}
+              language={language}
+              tables={task.tables}
+              labelledBy="solution-label"
+              describedBy="solution-hint"
+              autoFocus
+            />
+          </Suspense>
+          {error && <p className="error" role="alert">{error}</p>}
+          <button className="primary" onClick={submit} disabled={running}>
+            {running ? 'Running tests…' : 'Submit solution'}
+          </button>
+        </>
+      )}
     </>
   )
 }

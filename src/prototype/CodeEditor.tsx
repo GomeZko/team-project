@@ -31,9 +31,11 @@ type Props = {
   tables?: Record<string, string[]>
   labelledBy: string
   describedBy: string
+  // Put the cursor in the editor when it opens, for example right after "Start the task".
+  autoFocus?: boolean
 }
 
-export default function CodeEditor({ value, onChange, language, tables, labelledBy, describedBy }: Props) {
+export default function CodeEditor({ value, onChange, language, tables, labelledBy, describedBy, autoFocus }: Props) {
   const host = useRef<HTMLDivElement>(null)
   const changed = useRef(onChange)
   changed.current = onChange
@@ -55,6 +57,7 @@ export default function CodeEditor({ value, onChange, language, tables, labelled
         ],
       }),
     })
+    if (autoFocus) view.focus()
     return () => view.destroy()
   }, [language])
 
