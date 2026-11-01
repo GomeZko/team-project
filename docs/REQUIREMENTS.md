@@ -48,11 +48,13 @@ Core stories for v1 (G5, G6): **S2, S3, S4**, plus S1 sign-in.
 
 ### Added for v2 (2 Nov 2026)
 9. Given a user who opened a task, when they press "Start the task", then the timer starts and the code box opens; before that they can read the task without the clock running. When time passes, they see how much time is left; when the time is up they can still submit, and the report shows the time taken next to the limit.
-   - **Status: done** · PR: [#44](https://github.com/GomeZko/team-project/pull/44), "Start the task" in this PR · Test: tests/e2e/timer.spec.ts, src/prototype/time.test.ts · The timer is soft on purpose, see DECISIONS.md 2026-11-01.
+   - **Status: done** · PR: [#44](https://github.com/GomeZko/team-project/pull/44), [#50](https://github.com/GomeZko/team-project/pull/50) ("Start the task") · Test: tests/e2e/timer.spec.ts, src/prototype/time.test.ts · The timer is soft on purpose, see DECISIONS.md 2026-11-01.
 10. Given a user writing a solution, when they type in the code box, then it works like an IDE: colours for the language, line numbers, matching brackets, and suggestions for the language's words and, in SQL, the task's tables and columns. It never suggests the solution.
    - **Status: done** · PR: [#45](https://github.com/GomeZko/team-project/pull/45) · Test: tests/e2e/editor.spec.ts, tests/e2e/keyboard.spec.ts · Editor: CodeMirror, see DECISIONS.md 2026-11-01.
 11. Given a task author who published a task, when they copy its link and send it to a candidate, then the candidate opens the link, signs in or creates an account, and lands on that task with the timer and the editor.
    - **Status: todo, after the 2 Nov demo** · Board: [#48](https://github.com/GomeZko/team-project/issues/48) · Needs first: author tasks saved in the `tasks` table (today they stay in the author's browser, so a link would not open on the candidate's computer), and PR #42 merged, because both change `store.ts`. The author sees numbers for the task without names (`my_task_stats`); a candidate who wants the author to see their result sends their own report link (S7). v1 scope in PRODUCT.md is the job-seeker side, so Daniel confirms this story before it starts.
+12. Given a task author adding a task, when they attach a file (for example a CSV with sample data for an SQL task, or a design image for a frontend task), then the candidate sees and can download that file on the task screen.
+   - **Status: todo, after the 2 Nov demo** · Board: [#52](https://github.com/GomeZko/team-project/issues/52) · Needs first: author tasks saved in the `tasks` table (S11), and Supabase Storage with its own access rules, a size limit and allowed file types. In v1 the author pastes starter code as text, because the checks read text. Daniel confirms which files are worth supporting before it starts.
 
 ## Events (past tense, chronological order, with triggering command)
 
