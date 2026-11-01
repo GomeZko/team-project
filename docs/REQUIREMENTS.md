@@ -42,7 +42,7 @@ Core stories for v1 (G5, G6): **S2, S3, S4**, plus S1 sign-in.
 6. Given the AI evaluation is complete, when the user opens their report, then they see test results, AI feedback, and an overall skill score.
    - **Status: done in the prototype, without real AI** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#29](https://github.com/GomeZko/team-project/pull/29) · Test: tests/e2e/prototype.spec.ts
 7. Given a completed report, when the user clicks "Share", then they get a shareable link or PDF to send to an employer.
-   - **Status: done in the prototype, sample link** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#29](https://github.com/GomeZko/team-project/pull/29) (badge) · Test: tests/e2e/prototype.spec.ts
+   - **Status: real link in branch `feat/db-attempts-report-link`, not merged yet** · PR: [#19](https://github.com/GomeZko/team-project/pull/19), [#29](https://github.com/GomeZko/team-project/pull/29) (badge) · Tests: tests/e2e/prototype.spec.ts, tests/e2e/attempts.spec.ts
 8. Given a signed-in user with past attempts, when they open "History", then they see a list of previous tasks and scores.
    - **Status: attempts saved in the database in branch `feat/db-attempts-report-link`, not merged yet** · PR: [#22](https://github.com/GomeZko/team-project/pull/22), [#30](https://github.com/GomeZko/team-project/pull/30) (attempts per account) · Tests: tests/e2e/prototype.spec.ts, tests/e2e/auth.spec.ts, tests/e2e/attempts.spec.ts
 
