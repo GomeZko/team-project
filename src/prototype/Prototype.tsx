@@ -1,13 +1,17 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { toAppUser } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { runChecks, withCustomTasks, type Category, type CheckResult, type Task } from './data'
 import AddTask from './AddTask'
+import type { Language } from './CodeEditor'
 import MyTasks from './MyTasks'
 import Dashboard from './Dashboard'
 import History from './History'
 import SignIn from './SignIn'
 import { clock, duration } from './time'
+
+// The editor is large, so it loads only when a task opens; the sign-in page stays fast (non-functional requirement 1).
+const CodeEditor = lazy(() => import('./CodeEditor'))
 import { addAttempt, addCustomTask, loadAttempts, loadCustomTasks, type Attempt, type User } from './store'
 
 // Clickable prototype for G4. Screens and words follow docs/UX.md.
@@ -30,6 +34,11 @@ export default function Prototype() {
   const [screen, setScreen] = useState<Screen>({ name: 'dashboard' })
   const shownUserId = useRef<string | null>(null)
   const categories = withCustomTasks(customTasks)
+  // The editor's language follows the task's category; Junior Backend tasks are written in Java.
+  const languageOf = (task: Task): Language => {
+    const id = categories.find((c) => c.tasks.includes(task))?.id
+    return id === 'sql' ? 'sql' : id === 'frontend' ? 'javascript' : id === 'python' ? 'python' : 'java'
+  }
 
   // Supabase remembers the session in this browser and tells us when someone signs in or out.
   // It also sends events when a token is refreshed: we only reset the screen when the person changes.
@@ -119,7 +128,7 @@ export default function Prototype() {
           />
         )}
         {screen.name === 'task' && (
-          <TaskScreen task={screen.task} onBack={() => go('categories')} onDone={(results, seconds) => finish(screen.task, results, seconds)} />
+          <TaskScreen key={screen.task.id} task={screen.task} language={languageOf(screen.task)} onBack={() => go('categories')} onDone={(results, seconds) => finish(screen.task, results, seconds)} />
         )}
         {screen.name === 'report' && (
           <Report
@@ -175,7 +184,9 @@ function Tasks({ category, onBack, onPick }: { category: Category; onBack: () =>
   )
 }
 
-function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; onDone: (r: CheckResult[], seconds: number) => void }) {
+type TaskScreenProps = { task: Task; language: Language; onBack: () => void; onDone: (r: CheckResult[], seconds: number) => void }
+
+function TaskScreen({ task, language, onBack, onDone }: TaskScreenProps) {
   const [solution, setSolution] = useState(task.starter)
   const [error, setError] = useState('')
   const [running, setRunning] = useState(false)
@@ -187,19 +198,6 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
     return () => clearInterval(id)
   }, [])
   const left = task.minutes * 60 - Math.floor((now - startedAt.current) / 1000)
-  // Tab adds spaces in the code box (test A). Esc, then Tab, leaves the box, so keyboard users are not trapped.
-  const [leaving, setLeaving] = useState(false)
-
-  function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Escape') return setLeaving(true)
-    if (e.key !== 'Tab' || e.shiftKey || leaving) return
-    e.preventDefault()
-    const box = e.currentTarget
-    const { selectionStart: start, selectionEnd: end } = box
-    const next = solution.slice(0, start) + '    ' + solution.slice(end)
-    setSolution(next)
-    requestAnimationFrame(() => box.setSelectionRange(start + 4, start + 4))
-  }
 
   function submit() {
     if (solution.trim() === '' || solution.trim() === task.starter.trim()) {
@@ -238,17 +236,18 @@ function TaskScreen({ task, onBack, onDone }: { task: Task; onBack: () => void; 
           <li key={c.name}>{c.name}</li>
         ))}
       </ul>
-      <label htmlFor="solution">Your solution</label>
-      <p id="solution-hint" className="hint">Replace the comment in the starter code with your code. Tab adds spaces; press Esc, then Tab, to leave the box.</p>
-      <textarea
-        id="solution"
-        rows={8}
-        value={solution}
-        aria-describedby="solution-hint"
-        onChange={(e) => setSolution(e.target.value)}
-        onKeyDown={onKeyDown}
-        onBlur={() => setLeaving(false)}
-      />
+      <p id="solution-label" className="label">Your solution</p>
+      <p id="solution-hint" className="hint">Replace the comment in the starter code with your code. Suggestions appear as you type. Tab adds spaces; press Esc, then Tab, to leave the box (if suggestions are open, the first Esc closes them).</p>
+      <Suspense fallback={<p className="hint">Loading the editor…</p>}>
+        <CodeEditor
+          value={task.starter}
+          onChange={setSolution}
+          language={language}
+          tables={task.tables}
+          labelledBy="solution-label"
+          describedBy="solution-hint"
+        />
+      </Suspense>
       {error && <p className="error" role="alert">{error}</p>}
       <button className="primary" onClick={submit} disabled={running}>
         {running ? 'Running tests…' : 'Submit solution'}

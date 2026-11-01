@@ -11,6 +11,8 @@ export type Task = {
   examples: string[]
   starter: string
   checks: Check[]
+  // SQL tasks: tables and columns the editor suggests while typing.
+  tables?: Record<string, string[]>
 }
 
 export type Category = { id: string; name: string; tasks: Task[] }
@@ -30,6 +32,7 @@ export const categories: Category[] = [
           'The orders table has the columns customer_id and total. Write one query that returns the 3 customers who spent the most in total, highest first.',
         examples: ['Columns in the result: customer_id, spent', 'Rows: 3, sorted from the highest spent to the lowest'],
         starter: 'SELECT customer_id, SUM(total) AS spent\nFROM orders\n-- your query here',
+        tables: { orders: ['customer_id', 'total'] },
         checks: [
           { name: 'Groups orders by customer', anyOf: ['group by customer_id'], tip: 'Add GROUP BY customer_id so SUM adds up each customer separately.' },
           { name: 'Sorts from highest to lowest', anyOf: ['order by spent desc', 'order by sum(total) desc'], tip: 'Sort with ORDER BY spent DESC.' },
