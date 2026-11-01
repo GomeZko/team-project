@@ -14,7 +14,7 @@ All screens after sign-in have a top bar: "JobBridge" · "Dashboard" · "Tasks" 
 - Empty state: not applicable.
 - Loading state: the button changes to "Signing in…" or "Creating account…" and cannot be pressed again.
 - Error states: "Enter a valid email and your password." · "Enter your name, a valid email and a password of at least 6 characters." · "Wrong email or password." · "An account with this email already exists. Sign in instead." · "Could not reach the server. Check your connection and try again."
-- Copy: "Prototype: use a made-up name. Tasks and reports stay in this browser for now."
+- Copy: "Version 1" badge · "Version 1: use a made-up name. Your reports are kept in this browser for now."
 
 ### 0a. Dashboard (job-seeker)
 - Purpose: see progress and start a task.
