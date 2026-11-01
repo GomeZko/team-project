@@ -14,8 +14,8 @@ Core stories for G6: S2, S3, S4 (plus S1). All tests run on every pull request a
 | S8 history | tests/e2e/prototype.spec.ts: "history lists every attempt and opens its report"; tests/e2e/auth.spec.ts: "each account sees only its own attempts" | none | passed in CI |
 | Task author adds a task | tests/e2e/prototype.spec.ts: "a task author publishes a task and a job-seeker can solve it" | none | passed in CI |
 | S5 AI evaluation | none yet | none | todo |
-| S9 timer | tests/e2e/timer.spec.ts: "the timer counts down and the report shows the time taken", "when time is up the person can still submit…" (the browser clock is moved forward) | src/prototype/time.test.ts | in review |
-| S10 code editor | tests/e2e/editor.spec.ts: "the SQL editor suggests the task table and its columns"; tests/e2e/keyboard.spec.ts (leaving the editor by keyboard); prototype.spec.ts "…Tab adds spaces in the code box" | none | in review |
+| S9 timer | tests/e2e/timer.spec.ts: "the timer counts down and the report shows the time taken", "when time is up the person can still submit…" (the browser clock is moved forward) | src/prototype/time.test.ts | passed in CI (#44) |
+| S10 code editor | tests/e2e/editor.spec.ts: "the SQL editor suggests the task table and its columns"; tests/e2e/keyboard.spec.ts (leaving the editor by keyboard); prototype.spec.ts "…Tab adds spaces in the code box" | none | passed in CI (#45) |
 
 Evidence for G6:
 - Green CI run on main: https://github.com/GomeZko/team-project/actions/runs/40023442102 (commit 3f8ebb9, 26.10.2026)
