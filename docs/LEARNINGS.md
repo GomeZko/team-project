@@ -21,3 +21,8 @@ Append three lines at the end of every session. Never rewrite earlier entries.
 - What worked: extending the fake Supabase let us build and test saving attempts and the report link with no keys and no real accounts. A trial merge showed the new branch works together with `fix/leave-while-running` (29 of 29 browser tests) before either was merged.
 - What did not: green tests here do not prove the database works, because the migration has still not been run on the real project. Checking the repository against the gates also showed that two finished branches had no PR, and that TESTPLAN.md claims an `agent-found` label that does not exist. The new work reached 434 changed lines before anyone counted, so it had to be split afterwards.
 - What we change next week: open the PR the day a branch is finished, and check GitHub before writing that something is done. Count changed lines when a story is half done, not at the end. Run a migration on the real project before building on its tables.
+
+## Database migration · 1 Nov
+- What worked: running the migration by hand in the Supabase SQL Editor went well, so the tasks and attempts tables now exist on the real project.
+- What did not: the migration waited after PR #37 was merged, because Aleksandr's Supabase account has no access to the project, and the branch that uses the tables was built before it ran.
+- What we change next week: do the two-account check in the live app before the branch is merged, and give every teammate access to the Supabase project.

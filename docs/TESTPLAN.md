@@ -45,7 +45,9 @@ Last run: 27.10.2026, Postgres 17, all 13 steps as expected:
 | A visitor opens a report link before and after sharing | 0 rows before; the report after, and the view count goes up |
 | An author's numbers for their task | attempts, people and average score, no names |
 
-Still to do after the migration runs on the real project: the same two-account check in the live app (sign in as two test accounts on two browsers).
+The migration ran on the real project on 1.11.2026, in the Supabase SQL Editor, with no problems.
+
+Still to do: the same two-account check in the live app (sign in as two test accounts on two browsers).
 
 ## Agent-driven bug hunt (session 8)
 Agent: Claude Code with Playwright MCP (`.mcp.json`), 26.10.2026, against `npm run dev` with a fake Supabase in the browser (like tests/e2e/supabaseMock.ts).
